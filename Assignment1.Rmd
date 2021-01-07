@@ -27,6 +27,9 @@ set.seed(123)
 
 # Exercise 1
 
+## A 
+
+
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 
 ## Part A: Create a simple model with wages as dependent, schooling, age and age squared as independent
@@ -38,9 +41,8 @@ stargazer(model1)
 
 ```
 
-## A 
 
-The only statistically significant variable (5\% threshold) is the measure for schooling. On average, an increase of one year of schooling leads to an 0.216 in the logged value of wages. 
+The only statistically significant variable (5\% threshold) is the measure for schooling. On average, an increase of one year of schooling leads to an 22% increase in earnings. 
 
 \begin{table}[!htbp] \centering 
   \caption{} 
@@ -52,22 +54,22 @@ The only statistically significant variable (5\% threshold) is the measure for s
 \cline{2-2} 
 \\[-1.8ex] & Log of Wage \\ 
 \hline \\[-1.8ex] 
- Schooling & 0.216$^{***}$ \\ 
-  & (0.032) \\ 
+ Schooling & 0.22$^{***}$ \\ 
+  & (0.03) \\ 
   & \\ 
- Age & $-$0.342 \\ 
-  & (0.521) \\ 
+ Age & $-$0.34 \\ 
+  & (0.52) \\ 
   & \\ 
- Age$^2$ & $-$0.011 \\ 
-  & (0.008) \\ 
+ Age$^2$ & $-$0.01 \\ 
+  & (0.01) \\ 
   & \\ 
- Intercept & 26.409$^{***}$ \\ 
-  & (8.057) \\ 
+ Intercept & 26.41$^{***}$ \\ 
+  & (8.06) \\ 
   & \\ 
 \hline \\[-1.8ex] 
 Observations & 416 \\ 
-R$^{2}$ & 0.815 \\ 
-Adjusted R$^{2}$ & 0.813 \\ 
+R$^{2}$ & 0.82 \\ 
+Adjusted R$^{2}$ & 0.82 \\ 
 Residual Std. Error & 1.499 (df = 412) \\ 
 F Statistic & 604.261$^{***}$ (df = 3; 412) \\ 
 \hline 
@@ -100,6 +102,8 @@ Y_i =  \begin{cases}  Y^*_i  & \text{for } I_i = 1 \\
 
 If we try to estimate $Y_i$ with OLS, it will be consistent under one of two conditions. First, if $U_i$ and $V_i$ are independent. The intuition here is that in this case, there isis random sampling. But this is not the case here, since the observations are removed from the selected sample based on a criterion (unemployment). Second, if $X_i$ and $Z_i$ are uncorrelated. The intuition here is that when this holds, the variables that determine if one falls outside of the selected sample ($Z_i$) are unrelated to the the independent variables used in the selected sample ($X_i$), and thus the zero mean condition ($E(U_i | X_i) = 0$) still holds. If neither of these two conditions hold, the OLS is inconsistent in this context. 
 
+## C
+
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 
 
@@ -117,20 +121,19 @@ cor(dfEarnings %>% select(-logWage))
 
 ```
 
-## C
-The variable for the exclusion restriction should fulfill two conditions. First, the variable should have explanatory power when determining $I_i$. In this case, that means the variable should realistically influence the likelihood someone is unemployed. Second, the variable should be unrelated to the dependent variable $Y_i$. This means the variable should be unrelated to earnings. From the variables available, our best candidate appears to be the dummy variable of married (1 if married, 0 if not). Regarding the first condition; When someone is married, this affect their willingness to continue working, since they share income with their partner. Regarding the second condition; if one assumes that wages are reflective of someones productivity, the fact that someone is married, ceterus paribus, should not decrease one's productivity. However, there are some reasons to believe marriage still impacts wages - for one, married couples are more likely to have a baby, which likely affects ones earnings. But given the available variables, this appears the one that comes closest to fulfilling both criteria. Looking at the correlations, these confirm our intuitions; the correlation between marriage and unemployment is 0.17, but only 0.02 with logged wages. 
+
+The variable for the exclusion restriction should fulfill two conditions. First, the variable should have explanatory power when determining $I_i$. In this case, the variable should realistically influence the likelihood someone is unemployed. Second, the variable should be unrelated to the dependent variable $Y_i$, in this case earnings. From the variables available, our best candidate appears to be the dummy variable of married (1 if married, 0 if not). Regarding the first condition; When someone is married, this affect their willingness to continue working, since they share income with their partner. Regarding the second condition; if one assumes that wages are reflective of someones productivity, the fact that someone is married, should not meaningfully change one's productivity. However, there are some reasons to believe marriage still impacts wages - for one, married couples are more likely to have a baby, which likely affects ones earnings. But given the available variables, this appears the one that comes closest to fulfilling both criteria. Looking at the correlations, these confirm our intuitions; the correlation between marriage and unemployment is 0.17, but only 0.02 with logged wages. 
 
 
-## D & E
+##  D
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 
 ## Part D
 
 ### I first do it manually, and then with a package to compare
 
-
+# custom functionto perform two-step heckman estimation
 heckman <- function(formula_selection, formula_outcome, df){
-  
   
   # get the independent variables for selection model
   dfX_selection <- model.matrix(formula_selection, df)
@@ -150,15 +153,21 @@ heckman <- function(formula_selection, formula_outcome, df){
 
   # step 2 of heckman: add millsratio to regular OLS with selected variables
   heckman_step2 = lm(formula_step2, data=df_step2)
-
+  
   return(heckman_step2)
 
   
 }
 
+# no excluded variable
 Result_Heckman_NoExclusion = heckman(unemployed ~ schooling + age + age2, logWage ~ schooling + age + age2, df=dfEarnings)
 
+# with excluded variable in selection formula
 Result_Heckman_Exclusion = heckman(unemployed ~ schooling + age + age2 + married, logWage ~ schooling + age + age2, df=dfEarnings)
+
+# combine results in table
+stargazer(Result_Heckman_NoExclusion, Result_Heckman_Exclusion)
+
 
 
 # using sample selection package for 2-step heckman
@@ -166,25 +175,122 @@ heckman_package= heckit(selection = unemployed ~ schooling + age + age2 + marrie
                        outcome = logWage ~ schooling + age + age2, 
                        data = dfEarnings,
                        method="2step")
-heckman_package
-
-# our estimate is equal to that of the pacakge
-RhoSigma_est_package =  heckman_package$invMillsRatio
-
-
+# our estimate is equal to that of the package
 
 ## Part E
 
-# using sample selection package for ML estimation
-heckit(selection = unemployed ~ schooling + age + age2 + married,
-       outcome = logWage ~ schooling + age + age2, 
-       data = dfEarnings,
-       method="ML")
+# using sample selection package for ML estimation - no exclusion
+Result_MLE_NoExclusion = heckit(selection = unemployed ~ schooling + age + age2,
+                               outcome = logWage ~ schooling + age + age2, 
+                               data = dfEarnings,
+                               method="ML")
+
+Result_MLE_NoExclusion
+
+
+
+# using sample selection package for ML estimation - with exclusion
+Result_MLE_Exclusion = heckit(selection = unemployed ~ schooling + age + age2 + married,
+                               outcome = logWage ~ schooling + age + age2, 
+                               data = dfEarnings,
+                               method="ML")
+
+
+# combine results in table
+stargazer(Result_MLE_NoExclusion, Result_MLE_Exclusion)
+
 
 
 ```
 
-## Exercise 2
+We first estimate without the exclusion restriction, in which $X_i$ = $Z_i$ for the Heckman estimator. Because these terms are equal, there is collinearity in the second step of the Heckman estimator, biasing the estimates. To explain this a bit more formally, consider the two steps in the Heckman estimator:
+
+\begin{align*}
+\text{Step 1: Using a probit model, estimate $I_i$ with:  } \hat{I_i} = Z_i'\hat{\gamma_i} + V_i\\
+\text{Step 2: Estimate $\beta$ and $\rho\sigma$ with: } Y_i = X_i\beta + \rho\sigma\frac{\phi(Z_i'\hat{\gamma_i})}{\Phi(Z_i'\hat{\gamma_i})} + U_i^*  
+\end{align*}
+If $X_i$ = $Z_i$, due to the colinearity in the second regression, our estimate of $\beta$ and $\rho\sigma$ will be off. To further illustrate this difference, we first conduct the Heckman estimation where $X_i$ = $Z_i$, with $X_i$ consisting of the schooling, age, and age squared variables. We then conduct the Heckman estimation with the married variable added to $Z_i$. The table below reports the results of the second regression in the Heckman estimation:  
+
+\begin{table}[!htbp] \centering 
+  \caption{} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{logWage} \\ 
+\\[-1.8ex] & Without exclusion restriction & With exlcusion restriction\\ 
+\hline \\[-1.8ex] 
+ schooling & 0.303 & 0.215$^{***}$ \\ 
+  & (0.855) & (0.032) \\ 
+  & & \\ 
+ age & 1.423 & $-$0.385 \\ 
+  & (17.376) & (0.544) \\ 
+  & & \\ 
+ age2 & $-$0.039 & $-$0.010 \\ 
+  & (0.273) & (0.009) \\ 
+  & & \\ 
+ invMillRatio & 7.341 & $-$0.174 \\ 
+  & (72.233) & (0.617) \\ 
+  & & \\ 
+ Constant & $-$6.436 & 27.209$^{***}$ \\ 
+  & (323.291) & (8.553) \\ 
+  & & \\ 
+\hline \\[-1.8ex] 
+Observations & 416 & 416 \\ 
+R$^{2}$ & 0.815 & 0.815 \\ 
+Adjusted R$^{2}$ & 0.813 & 0.813 \\ 
+Residual Std. Error (df = 411) & 1.501 & 1.501 \\ 
+F Statistic (df = 4; 411) & 452.110$^{***}$ & 452.203$^{***}$ \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+## E 
+
+\begin{table}[!htbp] \centering 
+  \caption{} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{logWage} \\ 
+\\[-1.8ex] & Without exclusion restriction & With exclusion restriction\\ 
+\hline \\[-1.8ex] 
+ schooling & 0.274 & 0.215$^{***}$ \\ 
+  & (Inf.000) & (0.032) \\ 
+  & & \\ 
+ age & 1.594 & $-$0.379 \\ 
+  & (Inf.000) & (0.538) \\ 
+  & & \\ 
+ age2 & $-$0.042 & $-$0.011 \\ 
+  & (Inf.000) & (0.009) \\ 
+  & & \\ 
+ Constant & $-$6.423 & 27.091$^{***}$ \\ 
+  & (Inf.000) & (8.430) \\ 
+  & & \\ 
+\hline \\[-1.8ex] 
+Observations & 666 & 666 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+# Exercise 2
+
+## A 
+
+A key condition for OLS being the best linear unbiased estimator (BLUE) is that the errors are uncorrelated with the independent variables - the so-called exogeneity condition, or more formally, $plim(\frac{1}{n}X_i'\epsilon_i) = 0$. There are several reasons why this might not hold - one is that there is another variable that influences both $X_i$ and $y_i$. In the case of schooling ($X_i$) and earnings ($y_i$), there are several variables that affect both; for instance,  racist sentiments in society both affect people's ability to obtain schooling and find a job, and socio-economic privilege of one's family likely make both schooling and the job search easier. Given this, it seems implausible that this condition of OLS is satisfied.
+
+## B
+
+
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 
@@ -211,3 +317,8 @@ summary(modelSchooling_bothIV, diagnostics=TRUE)
 
 
 ```
+
+
+## C
+
+If all the independent variables are exogenous, then the OLS estimator is the most efficient consistent estimator - the IV estimator will still be consistent, but according to the Gaus-Markov theorem less efficient than OLS. We use the Hausman test to test for the exogeneity of the independent variable (schooling). (...). In the Hausman test with distance and subsidy as the instrument variables, the Hausman test rejects the null hypothesis (exogenous independent variables, OLS is consistent) at a 5\% threshold. This means we should prefer the IV estimator with distance and subsidy as the instrument variables. 
