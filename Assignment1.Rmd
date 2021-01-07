@@ -30,6 +30,7 @@ set.seed(123)
 ## A 
 
 
+
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 
 ## Part A: Create a simple model with wages as dependent, schooling, age and age squared as independent
@@ -41,11 +42,16 @@ stargazer(model1)
 
 ```
 
+We specify the model as follows:
 
-The only statistically significant variable (5\% threshold) is the measure for schooling. On average, an increase of one year of schooling leads to an 22% increase in earnings. 
+\begin{align*}
+  Log(Earnings) = \beta_0 + Schooling \beta_1 + Age \beta_2 + Age^2 \beta_3
+\end{align*}
+
+We run an OLS regression with this model, the results of which can be found below. The only statistically significant variable (5\% threshold) is the measure for schooling. On average, an increase of one year of schooling leads to an 22% increase in earnings. 
 
 \begin{table}[!htbp] \centering 
-  \caption{} 
+  \caption{The effect of Schooling, Age and $Age^2$ on earnings} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lc} 
 \\[-1.8ex]\hline 
@@ -69,8 +75,6 @@ The only statistically significant variable (5\% threshold) is the measure for s
 \hline \\[-1.8ex] 
 Observations & 416 \\ 
 R$^{2}$ & 0.82 \\ 
-Adjusted R$^{2}$ & 0.82 \\ 
-Residual Std. Error & 1.499 (df = 412) \\ 
 F Statistic & 604.261$^{***}$ (df = 3; 412) \\ 
 \hline 
 \hline \\[-1.8ex] 
@@ -79,15 +83,13 @@ F Statistic & 604.261$^{***}$ (df = 3; 412) \\
 \end{table} 
 
 ## B
-The problem is that there is selection on unobservables and observables. We have a selected sample, excluding the unemployed. This means we have no info on their potential earnings, if they were employed. We cannot just extrapolate our findings in the selected sample to the non-employed, since the selection influences both unobservable variables (for example; the unemployed might have less motivation) and observable variables (for instance; the effect of years of schooling on earnings might be less strong for people who have not worked for some years).  
-
-We model this selection bias in two steps. First, we indicate if the dependent variable is observed as follows:
+The problem is an selection on unobservables and observables. We have a selected sample, excluding the unemployed. This means we have no information on their potential earnings, if they were employed. We cannot just extrapolate our findings for the employed to the non-employed, since the selection influences both unobservable variables (for example; the unemployed might have less motivation) and observable variables (for instance; the effect of years of schooling on earnings might be less strong for people who have not worked for some years).  We model this selection bias in two steps. First, we indicate if the dependent variable is observed as follows:
 
 \begin{align*}
 I^*_i = Z'_i\gamma + V_i
 \end{align*}
 
-$I_i$ takes value 1 if $I^*_i > 0$, and 0 if $I^*_i \leq 0$. Second, we define our latent variable $Y^*_i$. 
+The indicator variable $I_i$ takes value 1 if $I^*_i > 0$, and 0 if $I^*_i \leq 0$. Second, we define our latent variable $Y^*_i$. 
 
 \begin{align*}
 Y^*_i = X'_i\beta + U_i
@@ -100,7 +102,7 @@ Y_i =  \begin{cases}  Y^*_i  & \text{for } I_i = 1 \\
                       Missing & \text{for } I_i = 0 \end{cases}
 \end{align*}
 
-If we try to estimate $Y_i$ with OLS, it will be consistent under one of two conditions. First, if $U_i$ and $V_i$ are independent. The intuition here is that in this case, there isis random sampling. But this is not the case here, since the observations are removed from the selected sample based on a criterion (unemployment). Second, if $X_i$ and $Z_i$ are uncorrelated. The intuition here is that when this holds, the variables that determine if one falls outside of the selected sample ($Z_i$) are unrelated to the the independent variables used in the selected sample ($X_i$), and thus the zero mean condition ($E(U_i | X_i) = 0$) still holds. If neither of these two conditions hold, the OLS is inconsistent in this context. 
+If we try to estimate $Y_i$ with OLS, it will be consistent under one of two conditions. First, if $U_i$ and $V_i$ are independent. The intuition is that in this case, there is random sampling, which means the sample is not biased. But this is not the case here, since the observations are unobserved based on a criterion (unemployment). Second, if $X_i$ and $Z_i$ are uncorrelated. The intuition here is that when this holds, the variables that determine if one falls outside of the selected sample ($Z_i$) are unrelated to the the independent variables used in the selected sample ($X_i$), and thus the zero mean condition ($E(U_i | X_i) = 0$) still holds. But this is again, highly questionable here - for example, a low level of schooling makes it more likely someone becomes unemployed, and negatively affects their earnings. If neither of these two conditions hold, which appears to be the case here,  the OLS is inconsistent.
 
 ## C
 
@@ -112,11 +114,10 @@ dfEarnings$unemployed = ifelse(is.na(dfEarnings$logWage),0,1)
 
 
 # check correlation matrix with logged wages
-cor(na.omit(dfEarnings) %>% select(-unemployed))
+cor_matrix_wages <- cor(na.omit(dfEarnings) %>% select(-unemployed))
 
 # check correlation matrix with unemployment (Indicator variable)
-cor(dfEarnings %>% select(-logWage))
-
+cor_matrix_unemployed <- cor(dfEarnings %>% select(-logWage))
 
 
 ```
@@ -209,10 +210,18 @@ We first estimate without the exclusion restriction, in which $X_i$ = $Z_i$ for 
 \text{Step 1: Using a probit model, estimate $I_i$ with:  } \hat{I_i} = Z_i'\hat{\gamma_i} + V_i\\
 \text{Step 2: Estimate $\beta$ and $\rho\sigma$ with: } Y_i = X_i\beta + \rho\sigma\frac{\phi(Z_i'\hat{\gamma_i})}{\Phi(Z_i'\hat{\gamma_i})} + U_i^*  
 \end{align*}
-If $X_i$ = $Z_i$, due to the colinearity in the second regression, our estimate of $\beta$ and $\rho\sigma$ will be off. To further illustrate this difference, we first conduct the Heckman estimation where $X_i$ = $Z_i$, with $X_i$ consisting of the schooling, age, and age squared variables. We then conduct the Heckman estimation with the married variable added to $Z_i$. The table below reports the results of the second regression in the Heckman estimation:  
+
+
+If $X_i$ = $Z_i$, then:
+
+\begin{align*}
+\frac{\phi(Z_i'\hat{\gamma_i})}{\Phi(Z_i'\hat{\gamma_i})} = \frac{\phi(X_i'\hat{\gamma})}{\Phi(X_i'\hat{\gamma})} \\
+ Y_i = X_i\beta + \rho\sigma\frac{\phi(X_i'\hat{\gamma})}{\Phi(X_i'\hat{\gamma})} + U_i^*
+\end{align*}
+The latter regression has perfect collinearity. This means the standard errors for our estimators of $\beta$ and $\rho\sigma$ will be inflated. To illustrate this difference, we first conduct the Heckman estimation where $X_i$ = $Z_i$, with $X_i$ consisting of the schooling, age, and age squared variables. We then conduct the Heckman estimation with the married variable added to $Z_i$. The table below reports the results of the second regression in the Heckman estimation:  
 
 \begin{table}[!htbp] \centering 
-  \caption{} 
+  \caption{Sample Selection Model, with Heckman estimator} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lcc} 
 \\[-1.8ex]\hline 
@@ -239,10 +248,6 @@ If $X_i$ = $Z_i$, due to the colinearity in the second regression, our estimate 
   & & \\ 
 \hline \\[-1.8ex] 
 Observations & 416 & 416 \\ 
-R$^{2}$ & 0.815 & 0.815 \\ 
-Adjusted R$^{2}$ & 0.813 & 0.813 \\ 
-Residual Std. Error (df = 411) & 1.501 & 1.501 \\ 
-F Statistic (df = 4; 411) & 452.110$^{***}$ & 452.203$^{***}$ \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
@@ -251,8 +256,10 @@ F Statistic (df = 4; 411) & 452.110$^{***}$ & 452.203$^{***}$ \\
 
 ## E 
 
+When we use the ML estimation, we run into the same problem. When a regression equation has perfect collinearity, many iterative methods that maximize the log-likelihood function (such as Newton-Rapson) are unable to identify the variance of the estimator - leading to undefined standard errors in if we don't apply the exclusion restriction.
+
 \begin{table}[!htbp] \centering 
-  \caption{} 
+  \caption{Sample Selection Model, With MLE estimator} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lcc} 
 \\[-1.8ex]\hline 
@@ -263,16 +270,16 @@ F Statistic (df = 4; 411) & 452.110$^{***}$ & 452.203$^{***}$ \\
 \\[-1.8ex] & Without exclusion restriction & With exclusion restriction\\ 
 \hline \\[-1.8ex] 
  schooling & 0.274 & 0.215$^{***}$ \\ 
-  & (Inf.000) & (0.032) \\ 
+  & (Undefined.) & (0.032) \\ 
   & & \\ 
  age & 1.594 & $-$0.379 \\ 
-  & (Inf.000) & (0.538) \\ 
+  & (Undefined.) & (0.538) \\ 
   & & \\ 
  age2 & $-$0.042 & $-$0.011 \\ 
-  & (Inf.000) & (0.009) \\ 
+  & (Undefined.) & (0.009) \\ 
   & & \\ 
  Constant & $-$6.423 & 27.091$^{***}$ \\ 
-  & (Inf.000) & (8.430) \\ 
+  & (Undefined.) & (8.430) \\ 
   & & \\ 
 \hline \\[-1.8ex] 
 Observations & 666 & 666 \\ 
@@ -282,6 +289,39 @@ Observations & 666 & 666 \\
 \end{tabular} 
 \end{table} 
 
+## F
+
+We find the distribution of potential earnings for the non-employed in two steps. First, using the coefficients from the ML estimation of sample selection model (with the exclusion criterion), we predict the earnings of the unemployed. We use the ML estimation, since this is more efficient than the two-step Heckman estimator. Second, we use kernel density estimation (KDE) to estimate the probability density function of these earnings. The plot below shows the result of this method. 
+
+
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+
+# get the unemployed
+dfEarnings_unemployed <- dfEarnings[dfEarnings$unemployed == 0,]
+
+# predict their earnings, given the coefficients from ML estimate (adjusted for truncation)
+Predicted_Earnings_Unemployed <- predict(Result_MLE_Exclusion, dfEarnings_unemployed)
+dfEarnings_unemployed$Predicted_Earnings = Predicted_Earnings_Unemployed
+
+
+
+Unemployed_DensityPlot <- ggplot(data=dfEarnings_unemployed,aes(x=Predicted_Earnings)) + 
+                             geom_histogram(aes(y=..density..), bins=10,colour="black", fill="lightgrey")+
+                             geom_density(alpha=.2, fill="#FF6666") +
+                             labs(x="Predicted Log Earnings for the Unemployed", y="Probability", title="Probability Density Function")+
+                             theme_minimal()
+
+
+Unemployed_DensityPlot
+
+```
+
+
+![](DensityPlot.png){width=65%}
+
+The main downside to this method is that the model we specified for the employed might not be sufficient to capture certain dynamics that that are particularly important for the unemployed. For instance, the model does not capture how long someone has been out of a job (since those employed currently have a job), which might affect the earning potential of those currently unemployed if they were to have a job. 
+
+
 # Exercise 2
 
 ## A 
@@ -290,6 +330,9 @@ A key condition for OLS being the best linear unbiased estimator (BLUE) is that 
 
 ## B
 
+A good set of instruments should fulfill two criteria: first, it should be relevant, or more formally: $Cov(Z_i,X_i) \neq 0$. Second, it should be valid: $Cov(Z_i, U_i) = 0$. Logically speaking, we suspect the distance variable does not fulfill the second criterion. How close one lives to a school can often be a function of parental wealth (since they can use their wealth to afford more expensive inner city houses closer to schools), which also tends to affect future earnings. On the other hand, regional subsidy policy appears more valid - since not all poor families necessarily get subsidies (they might not live in regions that adopt such policies). 
+
+To add to this intuition, regress the log of earnings on schooling without instruments, and with three different instruments: the subsidy variable, the distance variable, and both of them. For each, we conduct the Hausman test, and where possible the Sargan test. The results are shown below:
 
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
@@ -297,7 +340,6 @@ A key condition for OLS being the best linear unbiased estimator (BLUE) is that 
 
 # original model
 modelSchooling = lm(logWage ~ schooling, data = dfEarnings)
-summary(modelSchooling)
 
 #re-estimate models with the subsidy instrument
 modelSchooling_subsidyIV <- ivreg(logWage ~ schooling | subsidy, data = dfEarnings)
@@ -313,11 +355,41 @@ summary(modelSchooling_distanceIV, diagnostics=TRUE)
 modelSchooling_bothIV <- ivreg(logWage ~ schooling | distance + subsidy, data = dfEarnings)
 summary(modelSchooling_bothIV, diagnostics=TRUE)
 
-# prefer OLS over IV when not endogenous variables (since most efficient)
+# create table 
+stargazer(modelSchooling, modelSchooling_subsidyIV, modelSchooling_distanceIV, modelSchooling_bothIV)
 
 
 ```
 
+\begin{table}[!htbp] \centering 
+\small
+  \caption{The results per set of instruments} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lcccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{4}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-5} 
+\\[-1.8ex] & \multicolumn{4}{c}{logWage} \\ 
+ & \textit{} & \multicolumn{3}{c}{\textit{variable}} \\ 
+\\[-1.8ex] & No Instrument & Subsidy Instrument & Distance Instrument & Subsidy and Distance Instrument\\ 
+\hline \\[-1.8ex] 
+ schooling & 0.101 & 0.730$^{***}$ & 0.100 & 0.658$^{***}$ \\ 
+  & (0.073) & (0.262) & (0.626) & (0.245) \\ 
+  & & & & \\ 
+ Constant & 5.778$^{***}$ & 1.599 & 5.789 & 2.078 \\ 
+  & (0.512) & (1.753) & (4.163) & (1.639) \\ 
+  & & & & \\ 
+\hline \\[-1.8ex] 
+Observations & 416 & 416 & 416 & 416 \\ 
+R$^{2}$ & 0.005 & $-$0.176 & 0.005 & $-$0.137 \\ 
+Hausman (p-value) & -&0.006 & 0.998 & 0.010 \\
+Sargan (p-value) & - &- & - & 0.37 \\
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{4}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
 
 ## C
 
