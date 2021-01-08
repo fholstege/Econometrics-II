@@ -116,6 +116,7 @@ dfEarnings$unemployed = ifelse(is.na(dfEarnings$logWage),0,1)
 # check correlation matrix with logged wages
 cor_matrix_wages <- cor(na.omit(dfEarnings) %>% select(-unemployed))
 
+
 # check correlation matrix with unemployment (Indicator variable)
 cor_matrix_unemployed <- cor(dfEarnings %>% select(-logWage))
 
@@ -340,6 +341,10 @@ To add to this intuition, regress the log of earnings on schooling without instr
 
 # original model
 modelSchooling = lm(logWage ~ schooling, data = dfEarnings)
+
+# get residuals
+residuals_ols = modelSchooling$residuals
+
 
 #re-estimate models with the subsidy instrument
 modelSchooling_subsidyIV <- ivreg(logWage ~ schooling | subsidy, data = dfEarnings)
