@@ -332,6 +332,8 @@ A key condition for OLS being the best linear unbiased estimator (BLUE) is that 
 
 A good set of instruments should fulfill two criteria: first, it should be relevant, or more formally: $Cov(Z_i,X_i) \neq 0$. Second, it should be valid: $Cov(Z_i, U_i) = 0$. Logically speaking, we suspect the distance variable does not fulfill the second criterion. How close one lives to a school can often be a function of parental wealth (since they can use their wealth to afford more expensive inner city houses closer to schools), which also tends to affect future earnings. On the other hand, regional subsidy policy appears more valid - since not all poor families necessarily get subsidies (they might not live in regions that adopt such policies). 
 
+To check validity of the instruments, we look at correlation of the errors terms from OLS regression and two instruments: distance and regional subsidies. For a joint instruments we use Sargan test.
+
 To add to this intuition, regress the log of earnings on schooling without instruments, and with three different instruments: the subsidy variable, the distance variable, and both of them. For each, we conduct the Hausman test, and where possible the Sargan test. The results are shown below:
 
 
@@ -339,20 +341,24 @@ To add to this intuition, regress the log of earnings on schooling without instr
 
 
 # original model
-modelSchooling = lm(logWage ~ schooling, data = dfEarnings)
+modelSchooling = lm(logWage ~ schooling + age + age2, data = dfEarnings)
+
+# take OLS error terms
+residualsOLS <- residuals(modelSchooling)
+
+# correlate error terms with instruments
+cor(na.omit(dfEarnings), residualsOLS)
 
 #re-estimate models with the subsidy instrument
-modelSchooling_subsidyIV <- ivreg(logWage ~ schooling | subsidy, data = dfEarnings)
+modelSchooling_subsidyIV <- ivreg(logWage ~ schooling + age + age2 | subsidy + age + age2, data = dfEarnings)
 summary(modelSchooling_subsidyIV, diagnostics=TRUE)
 
-
 #re-estimate models with the distance instrument
-modelSchooling_distanceIV <- ivreg(logWage ~ schooling | distance, data = dfEarnings)
+modelSchooling_distanceIV <- ivreg(logWage ~ schooling + age + age2 | distance + age + age2, data = dfEarnings)
 summary(modelSchooling_distanceIV, diagnostics=TRUE)
 
-
 #re-estimate models with the subsidy and distance instrument
-modelSchooling_bothIV <- ivreg(logWage ~ schooling | distance + subsidy, data = dfEarnings)
+modelSchooling_bothIV <- ivreg(logWage ~ schooling + age + age2 | distance + subsidy + age + age2, data = dfEarnings)
 summary(modelSchooling_bothIV, diagnostics=TRUE)
 
 # create table 
