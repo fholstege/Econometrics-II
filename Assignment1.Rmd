@@ -48,7 +48,7 @@ We specify the model as follows:
   Log(Earnings) = \beta_0 + Schooling \beta_1 + Age \beta_2 + Age^2 \beta_3
 \end{align*}
 
-We run an OLS regression with this model, the results of which can be found below. The only statistically significant variable (5\% threshold) is the measure for schooling. On average, an increase of one year of schooling leads to an 22% increase in earnings. 
+We run an OLS regression with this model, the results of which can be found below. The only statistically significant variable (5\% threshold) is the measure for schooling. On average, an increase of one year of schooling leads to a 22% increase in earnings. 
 
 \begin{table}[!htbp] \centering 
   \caption{The effect of Schooling, Age and $Age^2$ on earnings} 
@@ -83,7 +83,7 @@ F Statistic & 604.261$^{***}$ (df = 3; 412) \\
 \end{table} 
 
 ## B
-The problem is an selection on unobservables and observables. We have a selected sample, excluding the unemployed. This means we have no information on their potential earnings, if they were employed. We cannot just extrapolate our findings for the employed to the non-employed, since the selection influences both unobservable variables (for example; the unemployed might have less motivation) and observable variables (for instance; the effect of years of schooling on earnings might be less strong for people who have not worked for some years).  We model this selection bias in two steps. First, we indicate if the dependent variable is observed as follows:
+The problem is a selection on unobservables and observables. We have a selected sample, excluding the unemployed. This means we have no information on their potential earnings, if they were employed. We cannot just extrapolate our findings for the employed to the non-employed, since the selection influences both unobservable variables (for example; the unemployed might have less motivation) and observable variables (for instance; the effect of years of schooling on earnings might be less strong for people who have not worked for some years).  We model this selection bias in two steps. First, we indicate if the dependent variable is observed as follows:
 
 \begin{align*}
 I^*_i = Z'_i\gamma + V_i
