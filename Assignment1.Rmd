@@ -372,9 +372,8 @@ stargazer(modelSchooling, modelSchooling_subsidyIV, modelSchooling_distanceIV, m
 \begin{tabular}{@{\extracolsep{5pt}}lcccc} 
 \\[-1.8ex]\hline 
 \hline \\[-1.8ex] 
- & \multicolumn{4}{c}{\textit{Dependent variable:}} \\ 
+ & \multicolumn{4}{c}{\textit{Dependent variable: logWage}} \\ 
 \cline{2-5} 
-\\[-1.8ex] & \multicolumn{4}{c}{logWage} \\ 
 \\[-1.8ex] & \textit{OLS} & \multicolumn{3}{c}{\textit{instrumental}} \\ 
  & \textit{} & \multicolumn{3}{c}{\textit{variable}} \\ 
 \\[-1.8ex] & OLS & Subsidy & Distance & Subsidy and Distance\\ 
@@ -394,8 +393,8 @@ stargazer(modelSchooling, modelSchooling_subsidyIV, modelSchooling_distanceIV, m
 \hline \\[-1.8ex] 
 Observations & 416 & 416 & 416 & 416 \\ 
 Adjusted R$^{2}$ & 0.813 & 0.798 & 0.784 & 0.797 \\ 
-Residual Std. Error (df = 412) & 1.499 & 1.560 & 1.613 & 1.565 \\ 
-Hausman & - & 3.634$^{*}$ & 0.845 & 0.038$^{**}$ \\
+Weak instrument & - & 43.320$^{***}$ & 5.374$^{**}$ & 23.894$^{***}$ \\ 
+Hausman & - & 3.634$^{**}$ & 0.845 & 4.343$^{***}$ \\
 Sargan test & - & - & - & 0.052 \\
 \hline 
 \hline \\[-1.8ex] 
@@ -403,9 +402,9 @@ Sargan test & - & - & - & 0.052 \\
 \end{tabular} 
 \end{table} 
 
-As we can see, distance and regional subsidy are almost not correlated with OLS error terms (0.045 and 0.089, respectively), i.e. they are valid instruments. Sargan test for a joint relevance of distance and regional subsidy as instruments show that both instruments are valid and the model specification is correct. F-test is bigger than 10 when we use subsidy; subsidy and distance. Thus, both instruments are relevant. 
+The variables distance and regional subsidy are almost not correlated with OLS error terms (0.045 and 0.089, respectively), i.e. they are valid instruments. Sargan test for a joint relevance of distance and regional subsidy as instruments show that both instruments are valid and the model specification is correct. F-test is bigger than 10 when we use subsidy or subsidy and distance together. Thus, both instruments are relevant.
 
 ## C
 
-If all the independent variables are exogenous, then the OLS estimator is the most efficient consistent estimator - the IV estimator will still be consistent, but according to the Gaus-Markov theorem less efficient than OLS. We use the Hausman test to test for the exogeneity of the independent variable (schooling). In the Hausman test with distance and subsidy and only subsidy as the instrument variables, the Hausman test rejects the null hypothesis (exogenous independent variables, OLS is consistent) at a 5\% threshold. This means we should prefer the IV estimator with distance and subsidy or only subsidy as the instrument variables.
+If all the independent variables are exogenous, then the OLS estimator is the most efficient consistent estimator - the IV estimator will still be consistent, but according to the Gaus-Markov theorem less efficient than OLS. We use the Hausman test to test for the exogeneity of the independent variable (schooling). In the Hausman test with distance and subsidy and only subsidy as the instrument variables, the Hausman test rejects the null hypothesis (exogenous independent variables, OLS is consistent) at a 5\% threshold. This means we should prefer the IV estimator with distance and subsidy or only subsidy as the instrumental variables. However, as a joint instruments doesn't add a lot to the model with only subsidy as an instrument, we should prefer the IV estimator with only subsidy.
 
