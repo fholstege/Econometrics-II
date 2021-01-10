@@ -257,7 +257,7 @@ Observations & 416 & 416 \\
 
 ## E 
 
-When we use the ML estimation, we run into the same problem. When a regression equation has perfect collinearity, many iterative methods that maximize the log-likelihood function (such as Newton-Rapson) are unable to identify the variance of the estimator - leading to undefined standard errors in if we don't apply the exclusion restriction.
+When we use the ML estimation, we run into the same problem. When a regression equation has perfect collinearity, many iterative methods that maximize the log-likelihood function (such as Newton-Rapson) are unable to identify the variance of the estimator, since the perfect multicollinearity leads to matrices that are not full-rank. This leads to undefined standard errors in if we don't apply the exclusion restriction.
 
 \begin{table}[!htbp] \centering 
   \caption{Sample Selection Model, With MLE estimator} 
@@ -398,7 +398,7 @@ stargazer(modelSchooling, modelSchooling_subsidyIV, modelSchooling_distanceIV, m
 \hline \\[-1.8ex] 
 Observations & 416 & 416 & 416 & 416 \\ 
 Adjusted R$^{2}$ & 0.813 & 0.798 & 0.784 & 0.797 \\ 
-Weak instrument & - & 43.320$^{***}$ & 5.374$^{**}$ & 23.894$^{***}$ \\ 
+F-test & - & 43.320$^{***}$ & 5.374$^{**}$ & 23.894$^{***}$ \\ 
 Hausman & - & 3.634$^{**}$ & 0.845 & 4.343$^{***}$ \\
 Sargan test & - & - & - & 0.052 \\
 \hline 
