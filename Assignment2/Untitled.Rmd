@@ -38,7 +38,7 @@ stargazer(lm_pooled_no_ab, lm_pooled_ab,
 
 When we do not account for ability in the model specification, returns to one year of education are higher, as expected. Higher ability students tend to get more education, thus, they tend to get higher earnings.
 
-From now on we are going to include the ability variable in all model specifications.
+From now on we are going to include the ability variable in all model specifications. For the sake of saving the space we don't report all coefficients in tables unless they are important for a specific question.
 
 \begin{table}[!htbp] \centering 
   \caption{OLS pooled model with and without an ethnicity dummy} 
@@ -163,7 +163,63 @@ Adjusted R$^{2}$ & 0.366 & 0.371 & 0.322 \\
 \end{tabular} 
 \end{table} 
 
-```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 
+## 4
+
+## 5
+
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+# Run fixed effect models with heteregoneity
+lm_inter_fix <- plm(EARNINGS ~ S + S*ETHBLACK + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW,
+                    data = df, model = "within", index = "ID")
+lm_white_fix <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
+                    data = df[df$ETHBLACK == 0,], model = "within", index = "ID")
+lm_black_fix <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
+                    data = df[df$ETHBLACK == 1,], model = "within", index = "ID")
+
+stargazer(lm_inter_fix, lm_white_fix, lm_black_fix,
+          keep.stat=c("n","adj.rsq"),
+          title="Panel regressions with fixed effects")
+```
+
+\begin{table}[!htbp] \centering 
+  \caption{Panel regressions with fixed effects} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{3}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-4} 
+\\[-1.8ex] & \multicolumn{3}{c}{EARNINGS} \\ 
+\\[-1.8ex] & (1) & (2) & (3)\\ 
+\hline \\[-1.8ex] 
+ S & 0.053$^{***}$ & 0.049$^{***}$ & 0.027$^{**}$ \\ 
+  & (0.004) & (0.004) & (0.011) \\ 
+  & & & \\ 
+ S:ETHBLACK & $-$0.062$^{***}$ &  &  \\ 
+  & (0.012) &  &  \\ 
+  & & & \\ 
+\hline \\[-1.8ex] 
+Observations & 40,043 & 35,223 & 4,820 \\ 
+Adjusted R$^{2}$ & 0.152 & 0.165 & 0.047 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{3}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+## 6 
+
+To decide between fixed or random effects we run a Hausman test. The p-value is highly significant, thus, it's preferred to use fixed effects.
+
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+phtest(lm_inter_fix, lm_inter_rand)
+# should we run any other tests?
+```
+
+## 7
+
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+# Run Mundlak estimation
 ```
 
