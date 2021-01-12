@@ -29,7 +29,8 @@ lm_pooled_ab <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REG
                     data = df, model = "pooling", index = "ID")
 
 stargazer(lm_pooled_no_ab, lm_pooled_ab,
-          keep.stat=c("n","adj.rsq"))
+          keep.stat=c("n","adj.rsq"),
+          title="OLS pooled model with and without an ethnicity dummy")
 
 # we should use robust s.e.
 # and change variable names to decent ones
@@ -40,7 +41,7 @@ When we do not account for ability in the model specification, returns to one ye
 From now on we are going to include the ability variable in all model specifications.
 
 \begin{table}[!htbp] \centering 
-  \caption{} 
+  \caption{OLS pooled model with and without an ethnicity dummy} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lcc} 
 \\[-1.8ex]\hline 
@@ -80,13 +81,14 @@ lm_white <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + RE
 lm_black <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df[df$ETHBLACK == 1,], model = "pooling", index = "ID")
 stargazer(lm_inter, lm_white, lm_black,
-          keep.stat=c("n","adj.rsq"))
+          keep.stat=c("n","adj.rsq"),
+          title="OLS pooled model with heterogeneous effects by ethnicity")
 ```
 
 As we can see, there is a statistically significant difference between returns to education by ethnicity. Black workers tend to get higher returns.
 
 \begin{table}[!htbp] \centering 
-  \caption{} 
+  \caption{OLS pooled model with heterogeneous effects by ethnicity} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lccc} 
 \\[-1.8ex]\hline 
@@ -116,19 +118,24 @@ Adjusted R$^{2}$ & 0.313 & 0.299 & 0.314 \\
 
 ## 3 
 
+Once we use a panel model with random effects, there seems to be no difference returns to education by ethnicity.
+
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+# Run random effect models with heteregoneity
 lm_inter_rand <- plm(EARNINGS ~ S + S*ETHBLACK + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW,
                     data = df, model = "random", index = "ID")
 lm_white_rand <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df[df$ETHBLACK == 0,], model = "random", index = "ID")
 lm_black_rand <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df[df$ETHBLACK == 1,], model = "random", index = "ID")
+
 stargazer(lm_inter_rand, lm_white_rand, lm_black_rand,
-          keep.stat=c("n","adj.rsq"))
+          keep.stat=c("n","adj.rsq"),
+          title="Panel regressions with random effects")
 ```
 
 \begin{table}[!htbp] \centering 
-  \caption{} 
+  \caption{Panel regressions with random effects} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lccc} 
 \\[-1.8ex]\hline 
@@ -140,9 +147,6 @@ stargazer(lm_inter_rand, lm_white_rand, lm_black_rand,
 \hline \\[-1.8ex] 
  S & 0.051$^{***}$ & 0.049$^{***}$ & 0.052$^{***}$ \\ 
   & (0.002) & (0.002) & (0.006) \\ 
-  & & & \\ 
- ASVABC & 0.011$^{***}$ & 0.011$^{***}$ & 0.016$^{***}$ \\ 
-  & (0.001) & (0.001) & (0.002) \\ 
   & & & \\ 
  S:ETHBLACK & $-$0.004 &  &  \\ 
   & (0.006) &  &  \\ 
@@ -158,3 +162,8 @@ Adjusted R$^{2}$ & 0.366 & 0.371 & 0.322 \\
 \textit{Note:}  & \multicolumn{3}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
 \end{tabular} 
 \end{table} 
+
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+
+```
+

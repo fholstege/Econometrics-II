@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.27)  12 JAN 2021 15:22
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.27)  12 JAN 2021 15:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -654,11 +654,11 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 183.
 Here is how much of TeX's memory you used:
  11890 strings out of 492649
  174147 string characters out of 6129622
- 286394 words of memory out of 5000000
+ 286431 words of memory out of 5000000
  15596 multiletter control sequences out of 15000+600000
  46152 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 32i,9n,38p,233b,342s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 32i,9n,38p,233b,344s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/lo
 cal/texlive/2018/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/20
 18/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2018/texmf-d
@@ -671,7 +671,7 @@ al/texlive/2018/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/
 ist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2018/texmf-dist/fonts/
 type1/public/lm/lmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/publ
 ic/lm/lmsy7.pfb>
-Output written on Untitled.pdf (2 pages, 135110 bytes).
+Output written on Untitled.pdf (2 pages, 135465 bytes).
 PDF statistics:
  75 PDF objects out of 1000 (max. 8388607)
  61 compressed objects within 1 object stream
