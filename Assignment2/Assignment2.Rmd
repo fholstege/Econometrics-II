@@ -237,5 +237,10 @@ summary(gls_mundlak)
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # Apply Verbeek and Nijman test
+freq <- table(df$ID) 
+freq <- as.data.frame(freq)
+  
+freq$Freq <- ifelse(freq$Freq > 4, freq$Freq, NA)
+freq <- na.omit(freq)
 ```
 
