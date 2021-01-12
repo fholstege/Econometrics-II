@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.27)  12 JAN 2021 13:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.27)  12 JAN 2021 15:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**Assignment1.tex
-(./Assignment1.tex
+**Untitled.tex
+(./Untitled.tex
 LaTeX2e <2018-04-01> patch level 2
 Babel <3.18> and hyphenation patterns for 84 language(s) loaded.
 (/usr/local/texlive/2018/texmf-dist/tex/latex/base/article.cls
@@ -466,10 +466,7 @@ Package grffile Info: Option `space' is set to `true'.
 Package grffile Info: \Gin@ii of package `graphicx' fixed on input line 494.
 ) (/usr/local/texlive/2018/texmf-dist/tex/latex/parskip/parskip.sty
 Package: parskip 2001/04/09 non-zero parskip adjustments
-) (./Assignment1.aux
-
-LaTeX Warning: Label `' multiply defined.
-
+) (./Untitled.aux
 
 LaTeX Warning: Label `' multiply defined.
 
@@ -477,7 +474,7 @@ LaTeX Warning: Label `' multiply defined.
 LaTeX Warning: Label `' multiply defined.
 
 )
-\openout1 = `Assignment1.aux'.
+\openout1 = `Untitled.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 72.
 LaTeX Font Info:    ... okay on input line 72.
@@ -531,9 +528,9 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 72.
 LaTeX Info: Redefining \pageref on input line 72.
 LaTeX Info: Redefining \nameref on input line 72.
-(./Assignment1.out) (./Assignment1.out)
+(./Untitled.out) (./Untitled.out)
 \@outlinefile=\write3
-\openout3 = `Assignment1.out'.
+\openout3 = `Untitled.out'.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -634,59 +631,50 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 81.
+(Font)              <10> on input line 88.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 81.
+(Font)              <7> on input line 88.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 81.
+(Font)              <5> on input line 88.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 183.
 [1
 
-{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
-<DensityPlot.png, id=75, 526.96875pt x 325.215pt>
-File: DensityPlot.png Graphic file (type png)
-<use DensityPlot.png>
-Package pdftex.def Info: DensityPlot.png  used on input line 305.
-(pdftex.def)             Requested size: 305.35262pt x 188.44618pt.
-[4 <./DensityPlot.png>] [5]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 412.
-[6]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 412.
-(./Assignment1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 412.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 412.
-Package rerunfilecheck Info: File `Assignment1.out' has not changed.
-(rerunfilecheck)             Checksum: BD9C292236F335009A7D38FED9039DB6;729.
+{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 183.
+(./Untitled.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 183.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 183.
+Package rerunfilecheck Info: File `Untitled.out' has not changed.
+(rerunfilecheck)             Checksum: EB0596D94083EC85D4478A79C00F8C7A;147.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 412.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 183.
  ) 
 Here is how much of TeX's memory you used:
- 11978 strings out of 492649
- 175146 string characters out of 6129622
- 285627 words of memory out of 5000000
- 15624 multiletter control sequences out of 15000+600000
- 59948 words of font info for 90 fonts, out of 8000000 for 9000
+ 11890 strings out of 492649
+ 174147 string characters out of 6129622
+ 286394 words of memory out of 5000000
+ 15596 multiletter control sequences out of 15000+600000
+ 46152 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 32i,16n,38p,236b,350s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{/usr/lo
-cal/texlive/2018/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texliv
-e/2018/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2018/tex
-mf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/2018/texmf-dist/fonts/
-enc/dvips/lm/lm-rm.enc}</usr/local/texlive/2018/texmf-dist/fonts/type1/public/l
-m/lmbx12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/lm/lmex10.p
-fb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/l
-ocal/texlive/2018/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/local/texliv
-e/2018/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2018/texm
-f-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2018/texmf-dist/font
-s/type1/public/lm/lmr17.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/pub
-lic/lm/lmr7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/lm/lmri1
-0.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></us
-r/local/texlive/2018/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on Assignment1.pdf (6 pages, 184640 bytes).
+ 32i,9n,38p,233b,342s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/lo
+cal/texlive/2018/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/20
+18/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2018/texmf-d
+ist/fonts/enc/dvips/lm/lm-ec.enc}</usr/local/texlive/2018/texmf-dist/fonts/type
+1/public/lm/lmbx12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/l
+m/lmmi10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/lm/lmr10.pf
+b></usr/local/texlive/2018/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/loc
+al/texlive/2018/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/
+2018/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2018/texmf-d
+ist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2018/texmf-dist/fonts/
+type1/public/lm/lmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/publ
+ic/lm/lmsy7.pfb>
+Output written on Untitled.pdf (2 pages, 135110 bytes).
 PDF statistics:
- 141 PDF objects out of 1000 (max. 8388607)
- 118 compressed objects within 2 object streams
- 23 named destinations out of 1000 (max. 500000)
- 12382 words of extra memory for PDF output out of 14400 (max. 10000000)
+ 75 PDF objects out of 1000 (max. 8388607)
+ 61 compressed objects within 1 object stream
+ 9 named destinations out of 1000 (max. 500000)
+ 12313 words of extra memory for PDF output out of 14400 (max. 10000000)
 
