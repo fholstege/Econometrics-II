@@ -7,12 +7,12 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-
 # Packages required for subsequent analysis. P_load ensures these will be installed and loaded. 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(rio,
                stargazer,
-               plm)
+               plm,
+               parameters)
 
 # load dataset
 df <- import("Data/NLSY2000RC_V2.csv")
@@ -220,6 +220,22 @@ phtest(lm_inter_fix, lm_inter_rand)
 ## 7
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
-# Run Mundlak estimation
+# Create within-mean variables
+df <- cbind(df, demean(df, select = c("AGE", "S", "URBAN", "REGNE", "REGNC", "REGW", "AGESQ"), 
+                      group = "ID"))
+df <- df[,c(1:20)]
+
+# Run Mundlak model
+gls_mundlak <- pggls(EARNINGS ~ S + S*ETHBLACK + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW + S_between + AGE_between + AGESQ_between + URBAN_between + REGNE_between + REGNC_between + REGW_between,
+                    data = df, model = "pooling", index = "ID")
+summary(gls_mundlak)
+```
+
+## 8
+
+## 9
+
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+# Apply Verbeek and Nijman test
 ```
 

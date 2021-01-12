@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.27)  12 JAN 2021 15:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.27)  12 JAN 2021 16:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -642,24 +642,24 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 [1
 
 {/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 223.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 227.
 [3]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 223.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 227.
 (./Untitled.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 223.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 223.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 227.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 227.
 Package rerunfilecheck Info: File `Untitled.out' has not changed.
-(rerunfilecheck)             Checksum: 418EC067E290B2A71D9F6022FA635B7D;343.
+(rerunfilecheck)             Checksum: E13886C5874D98A3821C689A1E7C0A3E;441.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 223.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 227.
  ) 
 Here is how much of TeX's memory you used:
- 11906 strings out of 492649
- 174312 string characters out of 6129622
- 289526 words of memory out of 5000000
- 15604 multiletter control sequences out of 15000+600000
+ 11912 strings out of 492649
+ 174378 string characters out of 6129622
+ 289574 words of memory out of 5000000
+ 15608 multiletter control sequences out of 15000+600000
  46235 words of font info for 65 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  32i,9n,38p,233b,371s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -675,10 +675,10 @@ al/texlive/2018/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/
 ist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2018/texmf-dist/fonts/
 type1/public/lm/lmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/publ
 ic/lm/lmsy7.pfb>
-Output written on Untitled.pdf (3 pages, 141927 bytes).
+Output written on Untitled.pdf (3 pages, 142436 bytes).
 PDF statistics:
- 97 PDF objects out of 1000 (max. 8388607)
- 82 compressed objects within 1 object stream
- 15 named destinations out of 1000 (max. 500000)
- 12345 words of extra memory for PDF output out of 14400 (max. 10000000)
+ 105 PDF objects out of 1000 (max. 8388607)
+ 90 compressed objects within 1 object stream
+ 17 named destinations out of 1000 (max. 500000)
+ 12361 words of extra memory for PDF output out of 14400 (max. 10000000)
 
