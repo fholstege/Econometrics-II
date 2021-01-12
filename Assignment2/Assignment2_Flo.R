@@ -34,7 +34,7 @@ RE_all <- plm(EARNINGS ~ S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + RE
 summary(RE_all, vcov = vcovW)
 
 # fixed effects model with all variables
-FE_all <- plm(EARNINGS ~ S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC, data = dfWorkers, model="within", index = "ID")
+FE_all <- plm(EARNINGS ~  S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC, data = dfWorkers, model="within", index = "ID")
 summary(FE_all, vcov = vcovW)
 
 # extract the fixed effects
@@ -50,46 +50,6 @@ dfMundlak <- cbind(X_hat, Eta)
 Mundlak_result <- lm(Eta ~ S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC, data=dfMundlak )
 
 
-
-
-
-index <- "ID"
-time_periods <- unique(dfWorkers$TIME)
-obs_all_periods <- unique(dfWorkers[,index])
-sIndex_var <- "ID"
-sTime_var <- "TIME"
-
-return_unique_id <- function(period, df){ return(unique(df[df[,sTime_var] == period, sIndex_var]))}
-
-obs_periods <- lapply(time_periods, return_unique_id, df=dfWorkers)#unique(df[df[, sTime_var] == x, sIndex_var]))
-Reduce(intersect, obs_periods)
-
-get_balanced_df <- function(sIndex_var, sTime_var,df){
-  
-  
-  time_periods <- unique(df[, sTime_var])
-
-  obs_periods <- return_unique_id <- function(period, df){ return(unique(df[df[,sTime_var] == period, sIndex_var]))}
-  
-  obs_balanced <- Reduce(intersect, obs_periods)
-  
-  
-  #for(period in time_periods){
-    
-  #  obs_period <- unique(df[df[, sTime_var] == period, sIndex_var])
-  #  common_period <- intersect(obs_all_periods, obs_period)
-  #  obs_all_periods <- common_period
-    
-  #}
-  
-  dfBalanced <- df[df[,sIndex_var] %in% obs_all_periods,]
-  return(dfBalanced)
-
-}
-
-dfBalanced <- get_balanced_df("ID","TIME" ,dfWorkers)
-
-
-
-
+# apply verbeek nijman test
+VerbeekNijman(FE_all)
 
