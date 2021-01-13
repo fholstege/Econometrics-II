@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.27)  13 JAN 2021 18:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2019.2.27)  13 JAN 2021 20:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -635,28 +635,28 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <5> on input line 79.
 [1
 
-{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 199.
-[2] [3]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 199.
+{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 239.
+[3]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 239.
 (./Assignment2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 199.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 199.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 239.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 239.
 Package rerunfilecheck Info: File `Assignment2.out' has not changed.
 (rerunfilecheck)             Checksum: E13886C5874D98A3821C689A1E7C0A3E;441.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 199.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 239.
  ) 
 Here is how much of TeX's memory you used:
- 11912 strings out of 492649
- 174427 string characters out of 6129622
- 285609 words of memory out of 5000000
+ 11932 strings out of 492649
+ 174635 string characters out of 6129622
+ 282609 words of memory out of 5000000
  15608 multiletter control sequences out of 15000+600000
- 46318 words of font info for 66 fonts, out of 8000000 for 9000
+ 47148 words of font info for 76 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 32i,9n,38p,236b,362s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 32i,9n,38p,236b,338s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/lo
 cal/texlive/2018/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/20
 18/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2018/texmf-d
@@ -670,7 +670,7 @@ dist/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2018/texmf-dist/fonts/t
 ype1/public/lm/lmri10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/publi
 c/lm/lmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/lm/lmsy7
 .pfb>
-Output written on Assignment2.pdf (3 pages, 160902 bytes).
+Output written on Assignment2.pdf (3 pages, 165924 bytes).
 PDF statistics:
  109 PDF objects out of 1000 (max. 8388607)
  93 compressed objects within 1 object stream

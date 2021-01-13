@@ -50,7 +50,7 @@ As a base model we use the following model specification:
   Log(Earnings) = \alpha_0 +\alpha_1 Schooling_{it} + \alpha_2 AGE_{it} + \alpha_3 AGE^2_{it} + \alpha_4 ETHNICITY_{i} + \alpha_5 URBAN_{it} + \\ \alpha_6 REGNE_{it} + \alpha_7 REGNC{it} + \alpha_8 REGW_{it} 
 \end{align*}
 
-In order to check the impact of ability, we include a variable $ASVABC$ in the base model. Including an ability allows to account for an omitted variavble bias that most likely occurs in the base model without it.
+In order to check the impact of ability, we include a variable $ASVABC$ in the base model. Including an ability allows to account for an omitted variavble bias that most likely occurs in the base model without it. To account for hetero , we use robust standard errors.
 
 The results of the base model with and without ability variable are as follows. When we do not account for ability in the model specification, returns to one year of education are higher, i.e. returns to a year of education are 7\% and statistically significant at the 1\% level. When we inlude the ability variable, returns to one year of education become 4.8\% and remain significant at the 1\% level. The underlying reason for such a drop is that higher ability students tend to get more education, thus, they tend to get higher earnings. 
 
@@ -86,25 +86,28 @@ Adjusted R$^{2}$ & 0.292 & 0.313 \\
 \end{tabular} 
 \end{table} 
 
-From now on we are going to include the ability variable in all model specifications due to two reasons. First, we deal with an omitted variable bias problem (theoretical problem). Second, including this variable improves our model: adjusted R squared is slightlty higher. Moreover, for the sake of saving the space we don't report all coefficients in tables unless they are important for a specific question.
+From now on we are going to include the ability variable in all model specifications due to two reasons. First, we deal with an omitted variable bias problem (theoretical problem). Second, including this variable improves our model: adjusted R squared is slightlty higher. Moreover, for the sake of saving the space we don't report all coefficients in tables unless they are important for a specific question. Besides, in our model robust s.e. are smaller than conventional s.e. The most probable cause for that is that residual variance goes up with the value of x (for example, earnings are more variable for those with more schooling) (Angrist and Pischke, 2009).
 
 ## 2
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # Include interaction between schooling and ethnicity & run two models for two races separately
-lm_inter <- plm(EARNINGS ~ Schooling + Schooling*Ethnicity + Ethnicity + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
+lm_inter <- plm(EARNINGS ~ Schooling + Test_score + Schooling*Ethnicity + Ethnicity + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df, model = "pooling", index = "ID")
 lm_white <- plm(EARNINGS ~ Schooling + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df[df$Ethnicity == 0,], model = "pooling", index = "ID")
 lm_black <- plm(EARNINGS ~ Schooling + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df[df$Ethnicity == 1,], model = "pooling", index = "ID")
+
 stargazer(lm_inter, lm_white, lm_black,
           keep.stat=c("n","adj.rsq"),
           se = list(vcovHC(lm_inter), vcovHC(lm_white), vcovHC(lm_black)),
           title="OLS pooled model with heterogeneous effects by ethnicity")
 ```
 
-As we can see, there is a statistically significant difference between returns to education by ethnicity. Black workers tend to get higher returns.
+To measure an amount of discrimination on the labour market, we estimate three OLS pooled models: including a cross effect of schooling and ethnicity and two models separated by ethnicity. As we can see, there is a statistically significant difference between returns to education by ethnicity. Interaction term between years of schooling and ethnicity yields a statistically significant effect of 1.6\% at the 1\% level. Having estimated a model separately for black and other give returns to a year of education of 6.1\% and 4.6\% respectively, which are significant at the 1\% level. Based on these results we can conclude that there is not a discrimination against black people.
+
+To estimate heterogenous returns to schooling in ipcoming models, we would use a model with an interaction term due to two reasons. First, it contains all observations in one dataset. Second, as we are not intrested in heterogenous effects between regressors other than schooling, a model with an interaction term is preferred to separated models.
 
 \begin{table}[!htbp] \centering 
   \caption{OLS pooled model with heterogeneous effects by ethnicity} 
@@ -119,12 +122,12 @@ As we can see, there is a statistically significant difference between returns t
 \hline \\[-1.8ex] 
  Schooling & 0.046$^{***}$ & 0.046$^{***}$ & 0.061$^{***}$ \\ 
   & ($-$0.00001) & ($-$0.00000) & ($-$0.0004) \\ 
-  & & & \\ 
- Ethnicity & $-$0.295$^{***}$ &  &  \\ 
-  & ($-$0.001) &  &  \\ 
-  & & & \\ 
+  & & & \\
  Test\_score & 0.011$^{***}$ & 0.010$^{***}$ & 0.014$^{***}$ \\ 
   & ($-$0.00002) & ($-$0.00002) & ($-$0.0001) \\ 
+  & & & \\  
+ Ethnicity & $-$0.295$^{***}$ &  &  \\ 
+  & ($-$0.001) &  &  \\ 
   & & & \\ 
  Schooling:Ethnicity & 0.016$^{***}$ &  &  \\ 
   & (0.00004) &  &  \\ 
@@ -139,11 +142,11 @@ Adjusted R$^{2}$ & 0.313 & 0.299 & 0.314 \\
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{3}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
 \end{tabular} 
-\end{table}
+\end{table} 
 
 ## 3 
 
-Once we use a panel model with random effects, there seems to be no difference returns to education by ethnicity.
+To exploit the panel data structure of our data, we use a panel model with random effects. Random effects model assumes that $E[\eta_i|X_{i1}, . . . , X_{iT} ] = 0$, i.e. individual effects are not correlated. As it can be seen in the overall table, there seems to be no difference between returns to education by ethnicity, i.e. an interaction term between scooling and ethnicity is not statistically significant. The results of the OLS pooled model differ from random fixed effects model. In the pooled OLS model indivudually specific effects are not being taken into account, thus, orthogonality assumption of the error term is violated. Therefore, one has to rely on the reults of panel model estimators.
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # Run random effect models with heteregoneity
@@ -156,6 +159,8 @@ stargazer(lm_inter_rand,
 ```
 
 ## 4
+
+Fixed-effects model should be preferred in our settings, as it is highly likely that unobserved individual effects would be correleted with our regressors, i.e. $E[\eta_i|X_{i1}, . . . , X_{iT} ] \neq 0$. This is due to the fact that our model has endogenity issues,thus, fixed-effects model is the preferred choice and gives us the best consistent estimates.
 
 ## 5
 
@@ -176,7 +181,6 @@ To decide between fixed or random effects we run a Hausman test. Under the $H_0$
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 phtest(lm_inter_fix, lm_inter_rand)
-
 ```
 
 ## 7
