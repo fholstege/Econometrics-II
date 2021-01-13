@@ -21,10 +21,13 @@ get_balanced_df <- function(sIndex_var, sTime_var,df){
   
 }
 
+# function to implement verbeek nijman test
 VerbeekNijman <- function(Unbalanced_model){
   
+  # parameters for plm
   param <- Unbalanced_model$args
   
+  # get 
   index_model <- colnames(index(Unbalanced_model))
   index_var <- eval(Unbalanced_model$call$index)
   time_var <- index_model[index_model!= index_var]

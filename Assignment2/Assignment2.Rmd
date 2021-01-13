@@ -17,6 +17,11 @@ pacman::p_load(rio,
 # load dataset
 df <- import("Data/NLSY2000RC_V2.csv")
 df$EARNINGS <- log(df$EARNINGS)
+
+
+# covariance matrix with White SE
+vcovWhite <- function(x) vcovHC(x, method="white1")
+
 ```
 
 ## 1
@@ -30,10 +35,11 @@ lm_pooled_ab <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REG
 
 stargazer(lm_pooled_no_ab, lm_pooled_ab,
           keep.stat=c("n","adj.rsq"),
-          title="OLS pooled model with and without an ethnicity dummy")
+          title="OLS pooled model with and without ability variable")
 
 # we should use robust s.e.
 # and change variable names to decent ones
+# add citation
 ```
 
 When we do not account for ability in the model specification, returns to one year of education are higher, as expected. Higher ability students tend to get more education, thus, they tend to get higher earnings.
@@ -41,7 +47,7 @@ When we do not account for ability in the model specification, returns to one ye
 From now on we are going to include the ability variable in all model specifications. For the sake of saving the space we don't report all coefficients in tables unless they are important for a specific question.
 
 \begin{table}[!htbp] \centering 
-  \caption{OLS pooled model with and without an ethnicity dummy} 
+  \caption{OLS pooled model with and without ability variable} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lcc} 
 \\[-1.8ex]\hline 

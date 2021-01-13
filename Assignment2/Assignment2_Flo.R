@@ -60,7 +60,6 @@ summary(Mundlak_model)
 wald.test(b = coef(Mundlak_model), Sigma = vcov(Mundlak_model), Terms = 10:17)
 
 
-
 # apply verbeek nijman test
 VerbeekNijman(FE_all)
 
