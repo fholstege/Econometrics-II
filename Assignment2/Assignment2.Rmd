@@ -18,7 +18,6 @@ pacman::p_load(rio,
 df <- import("Data/NLSY2000RC_V2.csv")
 df$EARNINGS <- log(df$EARNINGS)
 
-
 # covariance matrix with White SE
 vcovWhite <- function(x) vcovHC(x, method="white1")
 
