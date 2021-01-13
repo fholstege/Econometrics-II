@@ -34,6 +34,7 @@ lm_pooled_ab <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REG
 
 stargazer(lm_pooled_no_ab, lm_pooled_ab,
           keep.stat=c("n","adj.rsq"),
+          se = list(vcovHC(lm_pooled_no_ab), vcovHC(lm_pooled_no_ab)),
           title="OLS pooled model with and without ability variable")
 
 # we should use robust s.e.
