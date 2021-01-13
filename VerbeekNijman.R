@@ -13,6 +13,9 @@ get_balanced_df <- function(sIndex_var, sTime_var,df){
   
   # all unique indexes that appear in all period
   obs_balanced <- Reduce(intersect, obs_periods)
+  print(typeof(obs_balanced))
+  print(length(obs_balanced))
+  print(obs_balanced)
   
   # df with balanced panels
   dfBalanced <- df[df[,sIndex_var] %in% obs_balanced,]
@@ -21,21 +24,50 @@ get_balanced_df <- function(sIndex_var, sTime_var,df){
   
 }
 
+
+ge_obs_forPanels <- function(sIndex_var, sTime_var, df, minPanel){
+  
+  
+  
+  df_tally_id <- df%>% group_by_(sIndex_var) %>% tally()
+  
+  
+  df_obs_panel <- df_tally_id %>% filter(n>=minPanel)
+  
+  vIDS <- as.character(unlist(df_obs_panel[,sIndex_var]))
+  print(typeof(vIDS))
+  print(length(vIDS))
+  print(vIDS)
+
+  dfPanels <- df[df[,sIndex_var] %in% vIDS,]
+  
+  return(dfPanels)
+}
+
+
 # function to implement verbeek nijman test
-VerbeekNijman <- function(Unbalanced_model){
+VerbeekNijman <- function(Unbalanced_model, minObs=NA){
   
   # parameters for plm
   param <- Unbalanced_model$args
   
-  # get 
+  # get the variables from the unbalanced model, put together in dataframe
   index_model <- colnames(index(Unbalanced_model))
   index_var <- eval(Unbalanced_model$call$index)
   time_var <- index_model[index_model!= index_var]
-  
   df <- cbind(index(Unbalanced_model), Unbalanced_model$model)
   
-  dfBalanced <- get_balanced_df(index_var, time_var, df)
+  if(is.na(minObs)){
+    dfBalanced <- get_balanced_df(index_var, time_var, df)
+  }else if(is.numeric(minObs)){
+    
+    dfBalanced <- ge_obs_forPanels(index_var, time_var, df,minObs )
+    
+  }
+  
+  print(dfBalanced)
 
+  # create balanced model with same parameters
   BalancedModel <- plm(Unbalanced_model$formula, 
                        data=dfBalanced, 
                        index = c(index_var), 
@@ -46,7 +78,9 @@ VerbeekNijman <- function(Unbalanced_model){
                        randomdfcor = param$random.dfcor,
                        inst.method = param$inst.method)
   
-
-  phtest(BalancedModel, Unbalanced_model)
+  # perform hausman test on balanced and unbalanced model
+  VerbeekNijmanTest <- phtest(BalancedModel, Unbalanced_model)
+  
+  return(VerbeekNijmanTest)
   
 }

@@ -61,5 +61,8 @@ wald.test(b = coef(Mundlak_model), Sigma = vcov(Mundlak_model), Terms = 10:17)
 
 
 # apply verbeek nijman test
-VerbeekNijman(FE_all)
+VerbeekNijman(FE_all,5)
 
+
+df_tally_id <- dfWorkers%>% group_by_("ID") %>% summarise(n = n())
+df_obs_panel <- df_tally_id %>% filter(n>=minPanel)
