@@ -18,18 +18,21 @@ pacman::p_load(rio,
 df <- import("Data/NLSY2000RC_V2.csv")
 df$EARNINGS <- log(df$EARNINGS)
 
+colnames(df) <- c("TIME", "ID", "AGE", "Schooling", "Ethnicity", "Test_score", "URBAN", "REGNE", "REGNC", "REGW", "REGS", "EARNINGS", "AGESQ")
+
 # covariance matrix with White SE
-vcovWhite <- function(x) vcovHC(x, method="white1")
+#vcovWhite <- function(x) vcovHC(x, method="white1")
+# should we just delete it?
 
 ```
 
 ## 1
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
-# Run poooled OLS including and excluding ASVABC
-lm_pooled_no_ab <- plm(EARNINGS ~ S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW,
+# Run poooled OLS including and excluding Test_score
+lm_pooled_no_ab <- plm(EARNINGS ~ Schooling + Ethnicity + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df, model = "pooling", index = "ID")
-lm_pooled_ab <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW,
+lm_pooled_ab <- plm(EARNINGS ~ Schooling + Ethnicity + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df, model = "pooling", index = "ID")
 
 stargazer(lm_pooled_no_ab, lm_pooled_ab,
@@ -37,14 +40,19 @@ stargazer(lm_pooled_no_ab, lm_pooled_ab,
           se = list(vcovHC(lm_pooled_no_ab), vcovHC(lm_pooled_no_ab)),
           title="OLS pooled model with and without ability variable")
 
-# we should use robust s.e.
 # and change variable names to decent ones
 # add citation
 ```
 
-When we do not account for ability in the model specification, returns to one year of education are higher, as expected. Higher ability students tend to get more education, thus, they tend to get higher earnings.
+As a base model we use the following model specification:
 
-From now on we are going to include the ability variable in all model specifications. For the sake of saving the space we don't report all coefficients in tables unless they are important for a specific question.
+\begin{align*}
+  Log(Earnings) = \alpha_0 +\alpha_1 Schooling_{it} + \alpha_2 AGE_{it} + \alpha_3 AGE^2_{it} + \alpha_4 ETHNICITY_{i} + \alpha_5 URBAN_{it} + \\ \alpha_6 REGNE_{it} + \alpha_7 REGNC{it} + \alpha_8 REGW_{it} 
+\end{align*}
+
+In order to check the impact of ability, we include a variable $ASVABC$ in the base model. Including an ability allows to account for an omitted variavble bias that most likely occurs in the base model without it.
+
+The results of the base model with and without ability variable are as follows. When we do not account for ability in the model specification, returns to one year of education are higher, i.e. returns to a year of education are 7\% and statistically significant at the 1\% level. When we inlude the ability variable, returns to one year of education become 4.8\% and remain significant at the 1\% level. The underlying reason for such a drop is that higher ability students tend to get more education, thus, they tend to get higher earnings. 
 
 \begin{table}[!htbp] \centering 
   \caption{OLS pooled model with and without ability variable} 
@@ -57,14 +65,17 @@ From now on we are going to include the ability variable in all model specificat
 \\[-1.8ex] & \multicolumn{2}{c}{EARNINGS} \\ 
 \\[-1.8ex] & (1) & (2)\\ 
 \hline \\[-1.8ex] 
- S & 0.070$^{***}$ & 0.048$^{***}$ \\ 
-  & (0.001) & (0.001) \\ 
+ Schooling & 0.070$^{***}$ & 0.048$^{***}$ \\ 
+  & ($-$0.00004) & ($-$0.00004) \\ 
   & & \\ 
- ASVABC &  & 0.011$^{***}$ \\ 
-  &  & (0.0003) \\ 
+ Test\_score &  & 0.011$^{***}$ \\ 
+  &  & ($-$0.00004) \\ 
   & & \\ 
- Constant & $-$0.079 & $-$0.386$^{***}$ \\ 
-  & (0.051) & (0.051) \\ 
+ Ethnicity & $-$0.192$^{***}$ & $-$0.096$^{***}$ \\ 
+  & ($-$0.00004) & ($-$0.0002) \\ 
+  & & \\ 
+ Constant & $-$0.079$^{***}$ & $-$0.386$^{***}$ \\ 
+  & (0.004) & (0.004) \\ 
   & & \\ 
 \hline \\[-1.8ex] 
 Observations & 40,043 & 40,043 \\ 
@@ -75,19 +86,21 @@ Adjusted R$^{2}$ & 0.292 & 0.313 \\
 \end{tabular} 
 \end{table} 
 
-## 2
+From now on we are going to include the ability variable in all model specifications due to two reasons. First, we deal with an omitted variable bias problem (theoretical problem). Second, including this variable improves our model: adjusted R squared is slightlty higher. Moreover, for the sake of saving the space we don't report all coefficients in tables unless they are important for a specific question.
 
+## 2
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # Include interaction between schooling and ethnicity & run two models for two races separately
-lm_inter <- plm(EARNINGS ~ S + S*ETHBLACK + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW,
+lm_inter <- plm(EARNINGS ~ Schooling + Schooling*Ethnicity + Ethnicity + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df, model = "pooling", index = "ID")
-lm_white <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
-                    data = df[df$ETHBLACK == 0,], model = "pooling", index = "ID")
-lm_black <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
-                    data = df[df$ETHBLACK == 1,], model = "pooling", index = "ID")
+lm_white <- plm(EARNINGS ~ Schooling + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
+                    data = df[df$Ethnicity == 0,], model = "pooling", index = "ID")
+lm_black <- plm(EARNINGS ~ Schooling + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
+                    data = df[df$Ethnicity == 1,], model = "pooling", index = "ID")
 stargazer(lm_inter, lm_white, lm_black,
           keep.stat=c("n","adj.rsq"),
+          se = list(vcovHC(lm_inter), vcovHC(lm_white), vcovHC(lm_black)),
           title="OLS pooled model with heterogeneous effects by ethnicity")
 ```
 
@@ -104,14 +117,20 @@ As we can see, there is a statistically significant difference between returns t
 \\[-1.8ex] & \multicolumn{3}{c}{EARNINGS} \\ 
 \\[-1.8ex] & (1) & (2) & (3)\\ 
 \hline \\[-1.8ex] 
- S & 0.046$^{***}$ & 0.046$^{***}$ & 0.061$^{***}$ \\ 
-  & (0.001) & (0.001) & (0.003) \\ 
+ Schooling & 0.046$^{***}$ & 0.046$^{***}$ & 0.061$^{***}$ \\ 
+  & ($-$0.00001) & ($-$0.00000) & ($-$0.0004) \\ 
   & & & \\ 
- S:ETHBLACK & 0.016$^{***}$ &  &  \\ 
-  & (0.003) &  &  \\ 
+ Ethnicity & $-$0.295$^{***}$ &  &  \\ 
+  & ($-$0.001) &  &  \\ 
+  & & & \\ 
+ Test\_score & 0.011$^{***}$ & 0.010$^{***}$ & 0.014$^{***}$ \\ 
+  & ($-$0.00002) & ($-$0.00002) & ($-$0.0001) \\ 
+  & & & \\ 
+ Schooling:Ethnicity & 0.016$^{***}$ &  &  \\ 
+  & (0.00004) &  &  \\ 
   & & & \\ 
  Constant & $-$0.370$^{***}$ & $-$0.437$^{***}$ & 0.038 \\ 
-  & (0.051) & (0.054) & (0.140) \\ 
+  & (0.004) & (0.005) & (0.036) \\ 
   & & & \\ 
 \hline \\[-1.8ex] 
 Observations & 40,043 & 35,223 & 4,820 \\ 
@@ -120,7 +139,7 @@ Adjusted R$^{2}$ & 0.313 & 0.299 & 0.314 \\
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{3}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
 \end{tabular} 
-\end{table} 
+\end{table}
 
 ## 3 
 
@@ -128,47 +147,13 @@ Once we use a panel model with random effects, there seems to be no difference r
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # Run random effect models with heteregoneity
-lm_inter_rand <- plm(EARNINGS ~ S + S*ETHBLACK + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW,
+lm_inter_rand <- plm(EARNINGS ~ Schooling + Schooling*Ethnicity + Ethnicity + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df, model = "random", index = "ID")
-lm_white_rand <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
-                    data = df[df$ETHBLACK == 0,], model = "random", index = "ID")
-lm_black_rand <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
-                    data = df[df$ETHBLACK == 1,], model = "random", index = "ID")
 
-stargazer(lm_inter_rand, lm_white_rand, lm_black_rand,
+stargazer(lm_inter_rand,
           keep.stat=c("n","adj.rsq"),
           title="Panel regressions with random effects")
 ```
-
-\begin{table}[!htbp] \centering 
-  \caption{Panel regressions with random effects} 
-  \label{} 
-\begin{tabular}{@{\extracolsep{5pt}}lccc} 
-\\[-1.8ex]\hline 
-\hline \\[-1.8ex] 
- & \multicolumn{3}{c}{\textit{Dependent variable:}} \\ 
-\cline{2-4} 
-\\[-1.8ex] & \multicolumn{3}{c}{EARNINGS} \\ 
-\\[-1.8ex] & (1) & (2) & (3)\\ 
-\hline \\[-1.8ex] 
- S & 0.051$^{***}$ & 0.049$^{***}$ & 0.052$^{***}$ \\ 
-  & (0.002) & (0.002) & (0.006) \\ 
-  & & & \\ 
- S:ETHBLACK & $-$0.004 &  &  \\ 
-  & (0.006) &  &  \\ 
-  & & & \\ 
- Constant & $-$0.452$^{***}$ & $-$0.467$^{***}$ & $-$0.223$^{*}$ \\ 
-  & (0.048) & (0.050) & (0.122) \\ 
-  & & & \\ 
-\hline \\[-1.8ex] 
-Observations & 40,043 & 35,223 & 4,820 \\ 
-Adjusted R$^{2}$ & 0.366 & 0.371 & 0.322 \\ 
-\hline 
-\hline \\[-1.8ex] 
-\textit{Note:}  & \multicolumn{3}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
-\end{tabular} 
-\end{table} 
-
 
 ## 4
 
@@ -176,43 +161,13 @@ Adjusted R$^{2}$ & 0.366 & 0.371 & 0.322 \\
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # Run fixed effect models with heteregoneity
-lm_inter_fix <- plm(EARNINGS ~ S + S*ETHBLACK + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW,
+lm_inter_fix <- plm(EARNINGS ~ Schooling + Schooling*Ethnicity + Ethnicity + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df, model = "within", index = "ID")
-lm_white_fix <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
-                    data = df[df$ETHBLACK == 0,], model = "within", index = "ID")
-lm_black_fix <- plm(EARNINGS ~ S + ASVABC + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
-                    data = df[df$ETHBLACK == 1,], model = "within", index = "ID")
 
-stargazer(lm_inter_fix, lm_white_fix, lm_black_fix,
+stargazer(lm_inter_fix,
           keep.stat=c("n","adj.rsq"),
           title="Panel regressions with fixed effects")
 ```
-
-\begin{table}[!htbp] \centering 
-  \caption{Panel regressions with fixed effects} 
-  \label{} 
-\begin{tabular}{@{\extracolsep{5pt}}lccc} 
-\\[-1.8ex]\hline 
-\hline \\[-1.8ex] 
- & \multicolumn{3}{c}{\textit{Dependent variable:}} \\ 
-\cline{2-4} 
-\\[-1.8ex] & \multicolumn{3}{c}{EARNINGS} \\ 
-\\[-1.8ex] & (1) & (2) & (3)\\ 
-\hline \\[-1.8ex] 
- S & 0.053$^{***}$ & 0.049$^{***}$ & 0.027$^{**}$ \\ 
-  & (0.004) & (0.004) & (0.011) \\ 
-  & & & \\ 
- S:ETHBLACK & $-$0.062$^{***}$ &  &  \\ 
-  & (0.012) &  &  \\ 
-  & & & \\ 
-\hline \\[-1.8ex] 
-Observations & 40,043 & 35,223 & 4,820 \\ 
-Adjusted R$^{2}$ & 0.152 & 0.165 & 0.047 \\ 
-\hline 
-\hline \\[-1.8ex] 
-\textit{Note:}  & \multicolumn{3}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
-\end{tabular} 
-\end{table} 
 
 ## 6 
 
