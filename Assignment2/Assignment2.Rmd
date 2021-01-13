@@ -166,30 +166,39 @@ lm_inter_fix <- plm(EARNINGS ~ Schooling + Schooling*Ethnicity + Ethnicity + Tes
 
 stargazer(lm_inter_fix,
           keep.stat=c("n","adj.rsq"),
+          se = list(vcovHC(lm_inter_fix),
           title="Panel regressions with fixed effects")
 ```
 
 ## 6 
 
-To decide between fixed or random effects we run a Hausman test. The p-value is highly significant, thus, it's preferred to use fixed effects.
+To decide between fixed or random effects we run a Hausman test. Under the $H_0$,  $E[\eta_i|X_{i1}, . . . , X_{iT} ] = 0$, and the random effects and fixed effects model are both consistent. In this case, the random effects model is preferred, since its more efficient than the fixed effects model. However, if $H_A$ is true, and $E[\eta_i|X_{i1}, . . . , X_{iT} ] \neq 0$, then the fixed effects model is preffered, since its the only consistent one of the two. Performing the Hausman test on our random effect and fixed effect model, we reject the $H_0$ that both models are consistent, and thus the fixed effects model is preferred.  
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 phtest(lm_inter_fix, lm_inter_rand)
-# should we run any other tests?
+
 ```
 
 ## 7
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
-# Create within-mean variables
-df <- cbind(df, demean(df, select = c("AGE", "S", "URBAN", "REGNE", "REGNC", "REGW", "AGESQ"), 
-                      group = "ID"))
-df <- df[,c(1:20)]
 
-# Run Mundlak model
-gls_mundlak <- pggls(EARNINGS ~ S + S*ETHBLACK + ASVABC + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW + S_between + AGE_between + AGESQ_between + URBAN_between + REGNE_between + REGNC_between + REGW_between,
-                    data = df, model = "pooling", index = "ID")
-summary(gls_mundlak)
+
+# get average over time per worker
+X_hat <- data.frame(aggregate(. ~ ID, dfWorkers, mean))
+
+# add column names
+colnames(X_hat)[c(-1)] <- paste(colnames(X_hat)[c(-1)], "AVG", sep = "_")
+
+# add to individual variables in single dataframe
+dfMundlak = merge(dfWorkers, X_hat, by = "ID")
+
+# create mundlak model 
+Mundlak_model <- pggls(EARNINGS ~  S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC + S_AVG + AGE_AVG + AGESQ_AVG + ETHBLACK_AVG + URBAN_AVG + REGNE_AVG + REGNC_AVG + REGW_AVG, data=dfMundlak, model="random",index = c("ID"))
+summary(Mundlak_model)
+
+wald.test(b = coef(Mundlak_model), Sigma = vcov(Mundlak_model), Terms = 10:17)
+
 ```
 
 ## 8
