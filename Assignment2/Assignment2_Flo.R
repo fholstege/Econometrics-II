@@ -11,6 +11,8 @@ pacman::p_load(plm,
 # load the data
 dfWorkers = read.csv("Data/NLSY.csv")
 
+# load files
+source("VerbeekNijman.R")
 
 # covariance matrix with White SE
 vcovW <- function(x) vcovHC(x, method="white1")
@@ -33,21 +35,33 @@ summary(pooledOLS_Black, vcov = vcovW)
 RE_all <- plm(EARNINGS ~ S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC, data = dfWorkers, model="random", index = "ID")
 summary(RE_all, vcov = vcovW)
 
+
 # fixed effects model with all variables
 FE_all <- plm(EARNINGS ~  S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC, data = dfWorkers, model="within", index = "ID")
 summary(FE_all, vcov = vcovW)
 
-# extract the fixed effects
-Eta <- fixef(FE_all)
+#####################
+# Mundlak
+#####################
+
+
 
 # get average over time per worker
 X_hat <- data.frame(aggregate(. ~ ID, dfWorkers, mean))
+colnames(X_hat)[c(-1)] <- paste(colnames(X_hat)[c(-1)], "AVG", sep = "_")
 
-# add to the fixed effects per worker
-dfMundlak <- cbind(X_hat, Eta)
+# add to individual variables
+dfMundlak = merge(dfWorkers, X_hat, by = "ID")
+
+Mundlak_model <- pggls(EARNINGS ~  S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC + S_AVG + AGE_AVG + AGESQ_AVG + ETHBLACK_AVG + URBAN_AVG + REGNE_AVG + REGNC_AVG + REGW_AVG  + ASVABC_AVG, data=dfMundlak, model="random",index = c("ID"))
+summary(Mundlak_model)
+
+
+R 
+
 
 # check out the gamma -- e.g. the coefficient between Xhat and fixed effects 
-Mundlak_result <- lm(Eta ~ S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC, data=dfMundlak )
+#Mundlak_result <- lm(Eta ~ S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC, data=dfMundlak )
 
 
 # apply verbeek nijman test

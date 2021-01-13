@@ -26,14 +26,16 @@ VerbeekNijman <- function(Unbalanced_model){
   param <- Unbalanced_model$args
   
   index_model <- colnames(index(Unbalanced_model))
-  index_var <- Unbalanced_model$call$index
+  index_var <- eval(Unbalanced_model$call$index)
   time_var <- index_model[index_model!= index_var]
   
   df <- cbind(index(Unbalanced_model), Unbalanced_model$model)
   
   dfBalanced <- get_balanced_df(index_var, time_var, df)
 
-  BalancedModel <- plm(Unbalanced_model$formula, data=dfBalanced, index = index_var, 
+  BalancedModel <- plm(Unbalanced_model$formula, 
+                       data=dfBalanced, 
+                       index = c(index_var), 
                        model = param$model, 
                        effect = param$effect,
                        random.method = param$random.method,
