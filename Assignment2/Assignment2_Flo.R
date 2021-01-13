@@ -6,7 +6,8 @@ pacman::p_load(plm,
                car,
                clubSandwich,
                lmtest,
-               feisr)
+               feisr,
+               aod)
 
 # load the data
 dfWorkers = read.csv("Data/NLSY.csv")
@@ -53,15 +54,11 @@ colnames(X_hat)[c(-1)] <- paste(colnames(X_hat)[c(-1)], "AVG", sep = "_")
 # add to individual variables
 dfMundlak = merge(dfWorkers, X_hat, by = "ID")
 
-Mundlak_model <- pggls(EARNINGS ~  S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC + S_AVG + AGE_AVG + AGESQ_AVG + ETHBLACK_AVG + URBAN_AVG + REGNE_AVG + REGNC_AVG + REGW_AVG  + ASVABC_AVG, data=dfMundlak, model="random",index = c("ID"))
+Mundlak_model <- pggls(EARNINGS ~  S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC + S_AVG + AGE_AVG + AGESQ_AVG + ETHBLACK_AVG + URBAN_AVG + REGNE_AVG + REGNC_AVG + REGW_AVG, data=dfMundlak, model="random",index = c("ID"))
 summary(Mundlak_model)
 
+wald.test(b = coef(Mundlak_model), Sigma = vcov(Mundlak_model), Terms = 10:17)
 
-R 
-
-
-# check out the gamma -- e.g. the coefficient between Xhat and fixed effects 
-#Mundlak_result <- lm(Eta ~ S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC, data=dfMundlak )
 
 
 # apply verbeek nijman test
