@@ -13,10 +13,7 @@ get_balanced_df <- function(sIndex_var, sTime_var,df){
   
   # all unique indexes that appear in all period
   obs_balanced <- Reduce(intersect, obs_periods)
-  print(typeof(obs_balanced))
-  print(length(obs_balanced))
-  print(obs_balanced)
-  
+
   # df with balanced panels
   dfBalanced <- df[df[,sIndex_var] %in% obs_balanced,]
   
@@ -28,16 +25,14 @@ get_balanced_df <- function(sIndex_var, sTime_var,df){
 ge_obs_forPanels <- function(sIndex_var, sTime_var, df, minPanel){
   
   
-  
+  # get how often each index is observed
   df_tally_id <- df%>% group_by_(sIndex_var) %>% tally()
   
-  
+  # get the ones which fulfill the minimum per panel
   df_obs_panel <- df_tally_id %>% filter(n>=minPanel)
   
+  # filter in dataframe
   vIDS <- as.character(unlist(df_obs_panel[,sIndex_var]))
-  print(typeof(vIDS))
-  print(length(vIDS))
-  print(vIDS)
 
   dfPanels <- df[df[,sIndex_var] %in% vIDS,]
   
@@ -65,8 +60,6 @@ VerbeekNijman <- function(Unbalanced_model, minObs=NA){
     
   }
   
-  print(dfBalanced)
-
   # create balanced model with same parameters
   BalancedModel <- plm(Unbalanced_model$formula, 
                        data=dfBalanced, 

@@ -12,17 +12,17 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(rio,
                stargazer,
                plm,
-               parameters)
+               parameters,
+               multiwayvcov,
+               textreg,
+               texreg
+)
 
 # load dataset
 df <- import("Data/NLSY2000RC_V2.csv")
 df$EARNINGS <- log(df$EARNINGS)
 
 colnames(df) <- c("TIME", "ID", "AGE", "Schooling", "Ethnicity", "Test_score", "URBAN", "REGNE", "REGNC", "REGW", "REGS", "EARNINGS", "AGESQ")
-
-# covariance matrix with White SE
-#vcovWhite <- function(x) vcovHC(x, method="white1")
-# should we just delete it?
 
 ```
 
@@ -35,13 +35,16 @@ lm_pooled_no_ab <- plm(EARNINGS ~ Schooling + Ethnicity + AGE + AGESQ + URBAN + 
 lm_pooled_ab <- plm(EARNINGS ~ Schooling + Ethnicity + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df, model = "pooling", index = "ID")
 
+
+# added clustered SE
 stargazer(lm_pooled_no_ab, lm_pooled_ab,
           keep.stat=c("n","adj.rsq"),
-          se = list(vcovHC(lm_pooled_no_ab), vcovHC(lm_pooled_no_ab)),
+          se = list(vcovHC(lm_pooled_no_ab, cluster = "group"), vcovHC(lm_pooled_no_ab, cluster="group")),
           title="OLS pooled model with and without ability variable")
 
 # and change variable names to decent ones
 # add citation
+
 ```
 
 As a base model we use the following model specification:
@@ -101,7 +104,7 @@ lm_black <- plm(EARNINGS ~ Schooling + Test_score + AGE + AGESQ + URBAN + REGNE 
 
 stargazer(lm_inter, lm_white, lm_black,
           keep.stat=c("n","adj.rsq"),
-          se = list(vcovHC(lm_inter), vcovHC(lm_white), vcovHC(lm_black)),
+          se = list(vcovHC(lm_inter, cluster="group"), vcovHC(lm_white, cluster="group"), vcovHC(lm_black, cluster="group")),
           title="OLS pooled model with heterogeneous effects by ethnicity")
 ```
 
@@ -160,7 +163,7 @@ stargazer(lm_inter_rand,
 
 ## 4
 
-Fixed-effects model should be preferred in our settings, as it is highly likely that unobserved individual effects would be correleted with our regressors, i.e. $E[\eta_i|X_{i1}, . . . , X_{iT} ] \neq 0$. This is due to the fact that our model has endogenity issues,thus, fixed-effects model is the preferred choice and gives us the best consistent estimates.
+A priori, a Fixed-effects model seems to make more sense, as it is highly likely that unobserved individual effects would be correleted with our regressors, i.e. $E[\eta_i|X_{i1}, . . . , X_{iT} ] \neq 0$. For example, one unobserved individual effect could be the motivation of a worker. The schooling and age of worker are likely to have some impact on their motivation. In this case, there is endogeneity between the regressors (schooling, age) and individual effects,thus, fixed-effects model is the preferred choice and gives us consistent estimates.
 
 ## 5
 
@@ -177,7 +180,12 @@ stargazer(lm_inter_fix,
 
 ## 6 
 
-To decide between fixed or random effects we run a Hausman test. Under the $H_0$,  $E[\eta_i|X_{i1}, . . . , X_{iT} ] = 0$, and the random effects and fixed effects model are both consistent. In this case, the random effects model is preferred, since its more efficient than the fixed effects model. However, if $H_A$ is true, and $E[\eta_i|X_{i1}, . . . , X_{iT} ] \neq 0$, then the fixed effects model is preffered, since its the only consistent one of the two. Performing the Hausman test on our random effect and fixed effect model, we reject the $H_0$ that both models are consistent, and thus the fixed effects model is preferred.  
+To decide between fixed or random effects we run a Hausman test. Under the $H_0$,  $E[\eta_i|X_{i1}, . . . , X_{iT} ] = 0$, and the random effects and fixed effects model are both consistent. In this case, the random effects model is preferred, since its more efficient than the fixed effects model. However, if $H_A$ is true, and $E[\eta_i|X_{i1}, . . . , X_{iT} ] \neq 0$, then the fixed effects model is preferred, since its the only consistent one of the two.
+
+However, a crucial assumption we make when applying the Hausman test, in this way is that at least the fixed effects model is consistent. If both models are inconsistent, the Hausman test will  indicate that there is no difference between the two models, because the variance of $\beta$ is similar for both - but we cannot then say that we prefer the random effects over the fixed effects model - both are inconsistent. 
+
+In this sepecific case, there are good reasons to believe that the fixed effects model is also inconsistent. This is because the assumption of strict exogeneity,  $E[U_{it}|X_{i1}, . . . , X_{iT} , \eta_i] = 0 $, is likely to be violated. For instance, it is likely that there are certain unobserved variables, such as general socio-economic privilege and networks (social capital) affect both an individuals earnings, and their ability to obtain schooling. Thus, we cannot trust the Hausman test in this case. 
+
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 phtest(lm_inter_fix, lm_inter_rand)
@@ -185,36 +193,123 @@ phtest(lm_inter_fix, lm_inter_rand)
 
 ## 7
 
+In order to test whether or not to use random or fixed effects, we use the Mundlak estimation. We define this as follows:
+
+\begin{align*}
+\eta_i = \bar{X}_i\gamma + \omega_i \\
+Y_{it} = X'_{it}\beta + \bar{X}_i\gamma + \omega_i + U_i
+\end{align*}
+In this case, $\bar{X}_i$ is the average of each regressor, per worker, over time, and $\omega_i$ is a random element, assumed to be uncorrelated with $X_{it}$. Using the Mundlak estimation, we can subsequently test if $\gamma = 0$ ($H_0$), or if $\gamma \neq 0$. If we fail to reject $H_0$, then random effects is appropriate, since the average of the regressors is unrelated to the dependent variable. The table below shows the results of this last regression. 
+
+
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 
 
 # get average over time per worker
-X_hat <- data.frame(aggregate(. ~ ID, dfWorkers, mean))
+X_hat <- data.frame(aggregate(. ~ ID, df, mean))
+
+cor(df$Schooling, df$Schooling* df$Ethnicity)
 
 # add column names
 colnames(X_hat)[c(-1)] <- paste(colnames(X_hat)[c(-1)], "AVG", sep = "_")
 
 # add to individual variables in single dataframe
-dfMundlak = merge(dfWorkers, X_hat, by = "ID")
+dfMundlak = merge(df, X_hat, by = "ID")
 
 # create mundlak model 
-Mundlak_model <- pggls(EARNINGS ~  S + AGE + AGESQ + ETHBLACK + URBAN + REGNE + REGNC + REGW  + ASVABC + S_AVG + AGE_AVG + AGESQ_AVG + ETHBLACK_AVG + URBAN_AVG + REGNE_AVG + REGNC_AVG + REGW_AVG, data=dfMundlak, model="random",index = c("ID"))
-summary(Mundlak_model)
+Mundlak_model <- pggls(EARNINGS ~  Schooling + AGE + AGESQ + Ethnicity + URBAN + REGNE + REGNC + REGW  + Test_score +
+                         Schooling_AVG + AGE_AVG + AGESQ_AVG + Ethnicity_AVG + URBAN_AVG + REGNE_AVG + REGNC_AVG + REGW_AVG, 
+                       data=dfMundlak, model="random",index = "ID")
 
-wald.test(b = coef(Mundlak_model), Sigma = vcov(Mundlak_model), Terms = 10:17)
+
+
+# create latex code for pggls
+source("../Helpers.R")
+Latex_pggls <- extract.pggls(Mundlak_model, include.adjrs = TRUE)
+texreg(Latex_pggls)
+
+
+# perform wald test
+wald.test(b = coef(Mundlak_model), Sigma = vcov(Mundlak_model), Terms = 11:17)
 
 ```
+
+\begin{table}
+\begin{center}
+\begin{tabular}{l c}
+\hline
+ & Model 1 \\
+\hline
+(Intercept)    & $-1.23^{***}$ \\
+               & $(0.22)$      \\
+Schooling      & $0.05^{***}$  \\
+               & $(0.00)$      \\
+AGE            & $0.08^{***}$  \\
+               & $(0.00)$      \\
+AGESQ          & $-0.00^{***}$ \\
+               & $(0.00)$      \\
+Ethnicity      & $-0.09^{***}$ \\
+               & $(0.02)$      \\
+URBAN          & $0.03^{***}$  \\
+               & $(0.01)$      \\
+REGNE          & $0.05^{***}$  \\
+               & $(0.01)$      \\
+REGNC          & $-0.03^{*}$   \\
+               & $(0.01)$      \\
+REGW           & $0.08^{***}$  \\
+               & $(0.01)$      \\
+Test\_score    & $0.01^{***}$  \\
+               & $(0.00)$      \\
+Schooling\_AVG & $0.00$        \\
+               & $(0.00)$      \\
+AGE\_AVG       & $0.07^{***}$  \\
+               & $(0.02)$      \\
+AGESQ\_AVG     & $-0.00^{***}$ \\
+               & $(0.00)$      \\
+URBAN\_AVG     & $0.10^{***}$  \\
+               & $(0.02)$      \\
+REGNE\_AVG     & $0.06^{**}$   \\
+               & $(0.02)$      \\
+REGNC\_AVG     & $0.04^{*}$    \\
+               & $(0.02)$      \\
+REGW\_AVG      & $-0.03$       \\
+               & $(0.02)$      \\
+\hline
+R$^2$          & $0.31$        \\
+Num. obs.      & $40043$       \\
+\hline
+\multicolumn{2}{l}{\scriptsize{$^{***}p<0.001$; $^{**}p<0.01$; $^{*}p<0.05$}}
+\end{tabular}
+\caption{Statistical models}
+\label{table:coefficients}
+\end{center}
+\end{table}
+
+In this table, we do not show the "average test score", since this is already a constant. We test the joint probability of $\gamma = 0$ with a wald test. It is statistically significant, and thus we reject $H_0$, indicating that fixed effects is more appropriate for this case. 
 
 ## 8
 
 ## 9
 
+The Verbeek and Nijman test is simply a Hausman test between a model with an unbalanced dataset, and a model with a balanced dataset. This exercise asks us to apply it to a model with a dataset where each individual is in at least 5 panels. It seems that using this last model is inappropriate to test if there is attrition bias in the full, unbalanced dataset, since this latter model could still portray attrition bias: some individuals might have dropped out (e.g. less than 5 panels) for a variety of reasons (unmotivated, etc.) that might influence the results. We therefore also conduct a Verbeek and Nijman test where we comare the unbalanced dataset to a balanced dataset, with only workers that appear in all models. In both cases, the $H_0$ of the Verbeek and Nijman test (that there is no attrition bias) is rejected. 
+
+
+
+
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+
 # Apply Verbeek and Nijman test
-freq <- table(df$ID) 
-freq <- as.data.frame(freq)
-  
-freq$Freq <- ifelse(freq$Freq > 4, freq$Freq, NA)
-freq <- na.omit(freq)
+source("../VerbeekNijman.R")
+
+# first, if observations appear in 5 panels
+VerbeekNijman(lm_inter_fix, 5)
+
+# second, only in all panels (balanced)
+VerbeekNijman(lm_inter_fix)
+
+
+
+
+
 ```
 
