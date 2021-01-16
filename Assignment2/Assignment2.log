@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.1.5)  14 JAN 2021 13:47
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.1.16)  16 JAN 2021 16:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **Assignment2.tex
 (./Assignment2.tex
-LaTeX2e <2020-10-01> patch level 3
-L3 programming layer <2020-12-07> xparse <2020-03-03> (c:/Users/flori/AppData/R
+LaTeX2e <2020-10-01> patch level 4
+L3 programming layer <2021-01-09> xparse <2020-03-03> (c:/Users/flori/AppData/R
 oaming/TinyTeX/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2020/04/10 v1.4m Standard LaTeX document class
 (c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/size10.clo
@@ -381,7 +381,7 @@ line 40.
 )
 (c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/l3backend/l3backen
 d-pdftex.def
-File: l3backend-pdftex.def 2020-09-24 L3 backend support: PDF output (pdfTeX)
+File: l3backend-pdftex.def 2021-01-09 L3 backend support: PDF output (pdfTeX)
 \l__kernel_color_stack_int=\count276
 \l__pdf_internal_box=\box49
 ) (./Assignment2.aux
@@ -523,7 +523,7 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 [1
 
 {c:/Users/flori/AppData/Roaming/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdfte
-x.map}] [2] [3] (./Assignment2.aux)
+x.map}] [2] [3] [4] [5] (./Assignment2.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -531,16 +531,16 @@ Package rerunfilecheck Info: File `Assignment2.out' has not changed.
 (rerunfilecheck)             Checksum: E13886C5874D98A3821C689A1E7C0A3E;441.
  ) 
 Here is how much of TeX's memory you used:
- 10418 strings out of 481258
- 150025 string characters out of 5914245
- 444292 words of memory out of 5000000
- 27162 multiletter control sequences out of 15000+600000
- 443986 words of font info for 63 fonts, out of 8000000 for 9000
+ 10427 strings out of 481252
+ 150167 string characters out of 5914123
+ 448485 words of memory out of 5000000
+ 27173 multiletter control sequences out of 15000+600000
+ 446978 words of font info for 64 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 68i,10n,70p,245b,327s stack positions out of 5000i,500n,10000p,200000b,80000s
-{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-math
-sy.enc}{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm
--ec.enc}{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/l
+ 71i,11n,74p,245b,333s stack positions out of 5000i,500n,10000p,200000b,80000s
+{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.e
+nc}{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mat
+hsy.enc}{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/l
 m-mathit.enc}{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips
 /lm/lm-rm.enc}<c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/pu
 blic/lm/lmbx12.pfb><c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/typ
@@ -552,11 +552,12 @@ mf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/flori/AppData/Roaming/TinyTeX
 /texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/flori/AppData/Roaming/Tiny
 TeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/flori/AppData/Roaming
 /TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/flori/AppData/Ro
-aming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on Assignment2.pdf (3 pages, 166143 bytes).
+aming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb><c:/Users/flori/AppDat
+a/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
+Output written on Assignment2.pdf (5 pages, 175407 bytes).
 PDF statistics:
- 120 PDF objects out of 1000 (max. 8388607)
- 103 compressed objects within 2 object streams
- 24 named destinations out of 1000 (max. 500000)
+ 136 PDF objects out of 1000 (max. 8388607)
+ 116 compressed objects within 2 object streams
+ 27 named destinations out of 1000 (max. 500000)
  73 words of extra memory for PDF output out of 10000 (max. 10000000)
 

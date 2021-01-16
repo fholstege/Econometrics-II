@@ -184,7 +184,7 @@ To decide between fixed or random effects we run a Hausman test. Under the $H_0$
 
 However, a crucial assumption we make when applying the Hausman test, in this way is that at least the fixed effects model is consistent. If both models are inconsistent, the Hausman test will  indicate that there is no difference between the two models, because the variance of $\beta$ is similar for both - but we cannot then say that we prefer the random effects over the fixed effects model - both are inconsistent. 
 
-In this sepecific case, there are good reasons to believe that the fixed effects model is also inconsistent. This is because the assumption of strict exogeneity,  $E[U_{it}|X_{i1}, . . . , X_{iT} , \eta_i] = 0 $, is likely to be violated. For instance, it is likely that there are certain unobserved variables, such as general socio-economic privilege and networks (social capital) affect both an individuals earnings, and their ability to obtain schooling. Thus, we cannot trust the Hausman test in this case. 
+In this specific case, there are good reasons to believe that the fixed effects model is also inconsistent. This is because the assumption of strict exogeneity,  $E[U_{it}|X_{i1}, . . . , X_{iT} , \eta_i] = 0$, is likely to be violated. For instance, it is likely that there are certain unobserved variables, such as general socio-economic privilege and networks (social capital) affect both an individuals earnings, and their ability to obtain schooling. Thus, we cannot trust the Hausman test in this case. 
 
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
