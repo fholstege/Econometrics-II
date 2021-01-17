@@ -34,12 +34,12 @@ lm_pooled_no_ab <- plm(EARNINGS ~ Schooling + Ethnicity + AGE + AGESQ + URBAN + 
                     data = df, model = "pooling", index = "ID")
 lm_pooled_ab <- plm(EARNINGS ~ Schooling + Ethnicity + Test_score + AGE + AGESQ + URBAN + REGNE + REGNC + REGW,
                     data = df, model = "pooling", index = "ID")
-
-
+ 
+ 
 # added clustered SE
 stargazer(lm_pooled_no_ab, lm_pooled_ab,
           keep.stat=c("n","adj.rsq"),
-          se = list(vcovHC(lm_pooled_no_ab, cluster = "group"), vcovHC(lm_pooled_no_ab, cluster="group")),
+          se = list(coef(summary(lm_pooled_no_ab, cluster=c("ID")))[,2 ],coef(summary(lm_pooled_ab, cluster=c("ID")))[,2 ]),
           title="OLS pooled model with and without ability variable")
 
 ```
@@ -65,17 +65,17 @@ The results of the base model with and without ability variable are as follows. 
 \\[-1.8ex] & \multicolumn{2}{c}{EARNINGS} \\ 
 \\[-1.8ex] & (1) & (2)\\ 
 \hline \\[-1.8ex] 
- Schooling & 0.070$^{***}$ & 0.048$^{***}$ \\ 
-  & ($-$0.00004) & ($-$0.00004) \\ 
-  & & \\ 
- Test\_score &  & 0.011$^{***}$ \\ 
-  &  & ($-$0.00004) \\ 
+  Schooling & 0.070$^{***}$ & 0.048$^{***}$ \\ 
+  & (0.001) & (0.001) \\ 
   & & \\ 
  Ethnicity & $-$0.192$^{***}$ & $-$0.096$^{***}$ \\ 
-  & ($-$0.00004) & ($-$0.0002) \\ 
+  & (0.007) & (0.007) \\ 
   & & \\ 
- Constant & $-$0.079$^{***}$ & $-$0.386$^{***}$ \\ 
-  & (0.004) & (0.004) \\ 
+ Test score &  & 0.011$^{***}$ \\ 
+  &  & (0.0003) \\ 
+  & & \\ 
+ Constant & $-$0.079 & $-$0.386$^{***}$ \\ 
+  & (0.051) & (0.051) \\ 
   & & \\ 
 \hline \\[-1.8ex] 
 Observations & 40,043 & 40,043 \\ 
@@ -101,13 +101,13 @@ lm_black <- plm(EARNINGS ~ Schooling + Test_score + AGE + AGESQ + URBAN + REGNE 
 
 stargazer(lm_inter, lm_white, lm_black,
           keep.stat=c("n","adj.rsq"),
-          se = list(vcovHC(lm_inter, cluster="group"), vcovHC(lm_white, cluster="group"), vcovHC(lm_black, cluster="group")),
+          se = list(coef(summary(lm_inter, cluster=c("ID")))[,2], coef(summary(lm_white, cluster=c("ID")))[,2],coef(summary(lm_black,cluster=c("ID")))[,2]),
           title="OLS pooled model with heterogeneous effects by ethnicity")
 ```
 
 To measure an amount of discrimination on the labour market, we estimate three OLS pooled models: including a cross effect of schooling and ethnicity and two models separated by ethnicity. As we can see, there is a statistically significant difference between returns to education by ethnicity. Interaction term between years of schooling and ethnicity yields a statistically significant effect of 1.6\% at the 1\% level. Having estimated a model separately for black and other give returns to a year of education of 6.1\% and 4.6\% respectively, which are significant at the 1\% level. Based on these results we can conclude that there is not a discrimination against black people.
 
-To estimate heterogenous returns to schooling in upcoming models, we would use a model with an interaction term due to two reasons. First, it contains all observations in one dataset. Second, as we are not intrested in heterogenous effects between regressors other than schooling, a model with an interaction term is preferred to separated models.
+To estimate heterogenous returns to schooling in upcoming models, we would use a model with an interaction term due to two reasons. First, it contains all observations in one dataset. Second, as we are not interested in heterogenous effects between regressors other than schooling, a model with an interaction term is preferred to separated models.
 
 \begin{table}[!htbp] \centering 
   \caption{OLS pooled model with heterogeneous effects by ethnicity} 
@@ -121,19 +121,19 @@ To estimate heterogenous returns to schooling in upcoming models, we would use a
 \\[-1.8ex] & (1) & (2) & (3)\\ 
 \hline \\[-1.8ex] 
  Schooling & 0.046$^{***}$ & 0.046$^{***}$ & 0.061$^{***}$ \\ 
-  & ($-$0.00001) & ($-$0.00000) & ($-$0.0004) \\ 
-  & & & \\
- Test\_score & 0.011$^{***}$ & 0.010$^{***}$ & 0.014$^{***}$ \\ 
-  & ($-$0.00002) & ($-$0.00002) & ($-$0.0001) \\ 
-  & & & \\  
+  & (0.001) & (0.001) & (0.003) \\ 
+  & & & \\ 
+ Test score & 0.011$^{***}$ & 0.010$^{***}$ & 0.014$^{***}$ \\ 
+  & (0.0003) & (0.0003) & (0.001) \\ 
+  & & & \\ 
  Ethnicity & $-$0.295$^{***}$ &  &  \\ 
-  & ($-$0.001) &  &  \\ 
+  & (0.040) &  &  \\ 
   & & & \\ 
  Schooling:Ethnicity & 0.016$^{***}$ &  &  \\ 
-  & (0.00004) &  &  \\ 
+  & (0.003) &  &  \\ 
   & & & \\ 
  Constant & $-$0.370$^{***}$ & $-$0.437$^{***}$ & 0.038 \\ 
-  & (0.004) & (0.005) & (0.036) \\ 
+  & (0.051) & (0.054) & (0.140) \\ 
   & & & \\ 
 \hline \\[-1.8ex] 
 Observations & 40,043 & 35,223 & 4,820 \\ 
@@ -204,7 +204,6 @@ lm_inter_fix <- plm(EARNINGS ~ Schooling + Schooling*Ethnicity + Ethnicity + Tes
 
 stargazer(lm_inter_fix,
           keep.stat=c("n","adj.rsq"),
-          se = list(vcovHC(lm_inter_fix)),
           title="Panel regressions with fixed effects")
           
           
@@ -223,10 +222,10 @@ The table below shows the schooling coefficient (the average effect for both gro
 \\[-1.8ex] & EARNINGS \\ 
 \hline \\[-1.8ex] 
  Schooling & 0.053$^{***}$ \\ 
-  & (0.00003) \\ 
+  & (0.004) \\ 
   & \\ 
- Schooling:Ethnicity & $-$0.062$^{***}$ \\ 
-  & ($-$0.00003) \\ 
+Schooling:Ethnicity & $-$0.062$^{***}$ \\ 
+  & (0.012) \\ 
   & \\ 
 \hline \\[-1.8ex] 
 Observations & 40,043 \\ 
@@ -305,13 +304,13 @@ wald.test(b = coef(Mundlak_model), Sigma = vcov(Mundlak_model), Terms = 11:17)
                & $(0.22)$      \\
 Schooling      & $0.05^{***}$  \\
                & $(0.00)$      \\
-AGE            & $0.08^{***}$  \\
+Age            & $0.08^{***}$  \\
                & $(0.00)$      \\
-AGESQ          & $-0.00^{***}$ \\
+Age$^2$          & $-0.00^{***}$ \\
                & $(0.00)$      \\
 Ethnicity      & $-0.09^{***}$ \\
                & $(0.02)$      \\
-URBAN          & $0.03^{***}$  \\
+Urban          & $0.03^{***}$  \\
                & $(0.01)$      \\
 REGNE          & $0.05^{***}$  \\
                & $(0.01)$      \\
@@ -319,21 +318,21 @@ REGNC          & $-0.03^{*}$   \\
                & $(0.01)$      \\
 REGW           & $0.08^{***}$  \\
                & $(0.01)$      \\
-Test\_score    & $0.01^{***}$  \\
+Test score    & $0.01^{***}$  \\
                & $(0.00)$      \\
-Schooling\_AVG & $0.00$        \\
+Schooling AVG & $0.00$        \\
                & $(0.00)$      \\
-AGE\_AVG       & $0.07^{***}$  \\
+Age AVG       & $0.07^{***}$  \\
                & $(0.02)$      \\
-AGESQ\_AVG     & $-0.00^{***}$ \\
+Age$^2$ AVG     & $-0.00^{***}$ \\
                & $(0.00)$      \\
-URBAN\_AVG     & $0.10^{***}$  \\
+Urban AVG     & $0.10^{***}$  \\
                & $(0.02)$      \\
-REGNE\_AVG     & $0.06^{**}$   \\
+REGNE AVG     & $0.06^{**}$   \\
                & $(0.02)$      \\
-REGNC\_AVG     & $0.04^{*}$    \\
+REGNC AVG     & $0.04^{*}$    \\
                & $(0.02)$      \\
-REGW\_AVG      & $-0.03$       \\
+REGW AVG      & $-0.03$       \\
                & $(0.02)$      \\
 \hline
 R$^2$          & $0.31$        \\
