@@ -174,9 +174,40 @@ lm_inter_fix <- plm(EARNINGS ~ Schooling + Schooling*Ethnicity + Ethnicity + Tes
 
 stargazer(lm_inter_fix,
           keep.stat=c("n","adj.rsq"),
-          se = list(vcovHC(lm_inter_fix),
+          se = list(vcovHC(lm_inter_fix)),
           title="Panel regressions with fixed effects")
+          
+          
 ```
+
+The table below shows the schooling coefficient (the average effect for both groups), and the interaction term between schooling and ethnicity, for the fixed effects model. This latter effect should be interpret as follows: it measures the effect of schooling on earnings for black individuals (when the "ethnicity" variable is 1). On average, for both groups, one year of schooling leads to an 5.3\% increase in earnings. For black individuals, this effect is 6.2\% lower, and statistically significant. One might wonder what the intuition is behind this result?. It basically says; controlling for several other variables (age, region, etc. ) and fixed effects of these variables over time (e.g. an individuals average level of schooling), one extra year of schooling has significantly less returns for black individuals than right individuals. 
+
+\begin{table}[!htbp] \centering 
+  \caption{Panel regressions with fixed effects} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & EARNINGS \\ 
+\hline \\[-1.8ex] 
+ Schooling & 0.053$^{***}$ \\ 
+  & (0.00003) \\ 
+  & \\ 
+ Schooling:Ethnicity & $-$0.062$^{***}$ \\ 
+  & ($-$0.00003) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 40,043 \\ 
+Adjusted R$^{2}$ & 0.152 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table}
+
+
 
 ## 6 
 
@@ -288,6 +319,7 @@ Num. obs.      & $40043$       \\
 In this table, we do not show the "average test score", since this is already a constant. We test the joint probability of $\gamma = 0$ with a wald test. It is statistically significant, and thus we reject $H_0$, indicating that fixed effects is more appropriate for this case. 
 
 ## 8
+There is large heterogeneity in returns to schooling by ethnicity. The result from the Mundlak estimation shows that the random effects estimation is not trustworthy, and the panel nature of the data makes pooled regression inappropriate. Hence, we conclude with the result from the fixed effects estimation, that black individuals obtain much less returns from schooling. 
 
 ## 9
 
