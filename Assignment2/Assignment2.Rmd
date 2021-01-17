@@ -42,9 +42,6 @@ stargazer(lm_pooled_no_ab, lm_pooled_ab,
           se = list(vcovHC(lm_pooled_no_ab, cluster = "group"), vcovHC(lm_pooled_no_ab, cluster="group")),
           title="OLS pooled model with and without ability variable")
 
-# and change variable names to decent ones
-# add citation
-
 ```
 
 As a base model we use the following model specification:
@@ -53,7 +50,7 @@ As a base model we use the following model specification:
   Log(Earnings) = \alpha_0 +\alpha_1 Schooling_{it} + \alpha_2 AGE_{it} + \alpha_3 AGE^2_{it} + \alpha_4 ETHNICITY_{i} + \alpha_5 URBAN_{it} + \\ \alpha_6 REGNE_{it} + \alpha_7 REGNC{it} + \alpha_8 REGW_{it} 
 \end{align*}
 
-In order to check the impact of ability, we include a variable $ASVABC$ in the base model. Including an ability allows to account for an omitted variavble bias that most likely occurs in the base model without it. To account for hetero , we use robust standard errors.
+In order to check the impact of ability, we include a variable $ASVABC$ in the base model. Including an ability allows to account for an omitted variavble bias that most likely occurs in the base model without it. To account for heteroskedasticity and autocorrelation, we use robust standard errors.
 
 The results of the base model with and without ability variable are as follows. When we do not account for ability in the model specification, returns to one year of education are higher, i.e. returns to a year of education are 7\% and statistically significant at the 1\% level. When we inlude the ability variable, returns to one year of education become 4.8\% and remain significant at the 1\% level. The underlying reason for such a drop is that higher ability students tend to get more education, thus, they tend to get higher earnings. 
 
@@ -110,7 +107,7 @@ stargazer(lm_inter, lm_white, lm_black,
 
 To measure an amount of discrimination on the labour market, we estimate three OLS pooled models: including a cross effect of schooling and ethnicity and two models separated by ethnicity. As we can see, there is a statistically significant difference between returns to education by ethnicity. Interaction term between years of schooling and ethnicity yields a statistically significant effect of 1.6\% at the 1\% level. Having estimated a model separately for black and other give returns to a year of education of 6.1\% and 4.6\% respectively, which are significant at the 1\% level. Based on these results we can conclude that there is not a discrimination against black people.
 
-To estimate heterogenous returns to schooling in ipcoming models, we would use a model with an interaction term due to two reasons. First, it contains all observations in one dataset. Second, as we are not intrested in heterogenous effects between regressors other than schooling, a model with an interaction term is preferred to separated models.
+To estimate heterogenous returns to schooling in upcoming models, we would use a model with an interaction term due to two reasons. First, it contains all observations in one dataset. Second, as we are not intrested in heterogenous effects between regressors other than schooling, a model with an interaction term is preferred to separated models.
 
 \begin{table}[!htbp] \centering 
   \caption{OLS pooled model with heterogeneous effects by ethnicity} 
@@ -149,7 +146,40 @@ Adjusted R$^{2}$ & 0.313 & 0.299 & 0.314 \\
 
 ## 3 
 
-To exploit the panel data structure of our data, we use a panel model with random effects. Random effects model assumes that $E[\eta_i|X_{i1}, . . . , X_{iT} ] = 0$, i.e. individual effects are not correlated. As it can be seen in the overall table, there seems to be no difference between returns to education by ethnicity, i.e. an interaction term between scooling and ethnicity is not statistically significant. The results of the OLS pooled model differ from random fixed effects model. In the pooled OLS model indivudually specific effects are not being taken into account, thus, orthogonality assumption of the error term is violated. Therefore, one has to rely on the reults of panel model estimators.
+To exploit the panel data structure of our data, we use a panel model with random effects. Random effects model assumes that $E[\eta_i|X_{i1}, . . . , X_{iT} ] = 0$, i.e. individual effects are not correlated. As it can be seen in the overall table, there seems to be no difference between returns to education by ethnicity, i.e. an interaction term between scooling and ethnicity is not statistically significant. Thus, one would conclude that there seems to be no difference in returns to education by ethnicity.
+
+The results of the OLS pooled model differ from random fixed effects model. In the pooled OLS model indivudually specific effects are not being taken into account, thus, orthogonality assumption of the error term is violated. Therefore, one has to rely on the results of panel model estimators.
+
+\begin{table}[!htbp] \centering 
+  \caption{Panel regressions with random effects} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & EARNINGS \\ 
+\hline \\[-1.8ex] 
+ Schooling & 0.051$^{***}$ \\ 
+  & (0.002) \\ 
+  & \\ 
+ Ethnicity & $-$0.029 \\ 
+  & (0.077) \\ 
+  & \\ 
+ Schooling:Ethnicity & $-$0.004 \\ 
+  & (0.006) \\ 
+  & \\ 
+ Constant & $-$0.452$^{***}$ \\ 
+  & (0.048) \\ 
+  & \\ 
+\hline \\[-1.8ex] 
+Observations & 40,043 \\ 
+Adjusted R$^{2}$ & 0.366 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # Run random effect models with heteregoneity
@@ -163,7 +193,7 @@ stargazer(lm_inter_rand,
 
 ## 4
 
-A priori, a Fixed-effects model seems to make more sense, as it is highly likely that unobserved individual effects would be correleted with our regressors, i.e. $E[\eta_i|X_{i1}, . . . , X_{iT} ] \neq 0$. For example, one unobserved individual effect could be the motivation of a worker. The schooling and age of worker are likely to have some impact on their motivation. In this case, there is endogeneity between the regressors (schooling, age) and individual effects,thus, fixed-effects model is the preferred choice and gives us consistent estimates.
+A priori, a fixed-effects model seems to make more sense, as it is highly likely that unobserved individual effects would be correleted with our regressors, i.e. $E[\eta_i|X_{i1}, . . . , X_{iT} ] \neq 0$. For example, one unobserved individual effect could be the motivation of a worker. The schooling and age of worker are likely to have some impact on their motivation. In this case, there is endogeneity between the regressors (schooling, age) and individual effects, thus, fixed-effects model is the preferred choice and gives us consistent estimates.
 
 ## 5
 
@@ -180,7 +210,7 @@ stargazer(lm_inter_fix,
           
 ```
 
-The table below shows the schooling coefficient (the average effect for both groups), and the interaction term between schooling and ethnicity, for the fixed effects model. This latter effect should be interpret as follows: it measures the effect of schooling on earnings for black individuals (when the "ethnicity" variable is 1). On average, for both groups, one year of schooling leads to an 5.3\% increase in earnings. For black individuals, this effect is 6.2\% lower, and statistically significant. One might wonder what the intuition is behind this result?. It basically says; controlling for several other variables (age, region, etc. ) and fixed effects of these variables over time (e.g. an individuals average level of schooling), one extra year of schooling has significantly less returns for black individuals than right individuals. 
+The table below shows the schooling coefficient (the average effect for both groups), and the interaction term between schooling and ethnicity, for the fixed effects model. This latter effect should be interpret as follows: it measures the effect of schooling on earnings for black individuals, an amount of discrimination on the labour market. On average, for both groups, one year of schooling leads to an 5.3\% increase in earnings. For black individuals, this effect is 6.2\% lower, and statistically significant. One might wonder what the intuition is behind this result?. It basically says; controlling for several other variables (age, region, etc.) and fixed effects of these variables over time (e.g. an individuals average level of schooling), one extra year of schooling has significantly less returns for black individuals than right individuals. However, as in a fixed-effects model time-invariant variables are dropped out, we cannot make conclusions about an overall amount of discrimination that relates to other variables (living in urban ares, or living in south, west, etc.). Thus, we can overlook some discrimination effects that are not correlated with years of schooling.  
 
 \begin{table}[!htbp] \centering 
   \caption{Panel regressions with fixed effects} 
@@ -213,13 +243,13 @@ Adjusted R$^{2}$ & 0.152 \\
 
 To decide between fixed or random effects we run a Hausman test. Under the $H_0$,  $E[\eta_i|X_{i1}, . . . , X_{iT} ] = 0$, and the random effects and fixed effects model are both consistent. In this case, the random effects model is preferred, since its more efficient than the fixed effects model. However, if $H_A$ is true, and $E[\eta_i|X_{i1}, . . . , X_{iT} ] \neq 0$, then the fixed effects model is preferred, since its the only consistent one of the two.
 
-However, a crucial assumption we make when applying the Hausman test, in this way is that at least the fixed effects model is consistent. If both models are inconsistent, the Hausman test will  indicate that there is no difference between the two models, because the variance of $\beta$ is similar for both - but we cannot then say that we prefer the random effects over the fixed effects model - both are inconsistent. 
+However, a crucial assumption we make when applying the Hausman test, in this way is that at least the fixed effects model is consistent. If both models are inconsistent, the Hausman test will  indicate that there is no difference between the two models, because the variance of $\beta$ is similar for both - but we cannot then say that we prefer the random effects over the fixed effects model - both are inconsistent.
 
-In this specific case, there are good reasons to believe that the fixed effects model is also inconsistent. This is because the assumption of strict exogeneity,  $E[U_{it}|X_{i1}, . . . , X_{iT} , \eta_i] = 0$, is likely to be violated. For instance, it is likely that there are certain unobserved variables, such as general socio-economic privilege and networks (social capital) affect both an individuals earnings, and their ability to obtain schooling. Thus, we cannot trust the Hausman test in this case. 
+In this specific case, there are good reasons to believe that the fixed effects model is also inconsistent. This is because the assumption of strict exogeneity,  $E[U_{it}|X_{i1}, . . . , X_{iT} , \eta_i] = 0$, is likely to be violated. For instance, it is likely that there are certain unobserved variables, such as general socio-economic privilege and networks (social capital) affect both an individuals earnings, and their ability to obtain schooling. Thus, we cannot trust the Hausman test in this case. In order to overcome this issue, we use a Robust Hausman test. We reject the null hypothesis, thus, the fixed effects model is preferred, since its the only consistent one of the two.
 
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
-phtest(lm_inter_fix, lm_inter_rand)
+phtest(lm_inter_fix, lm_inter_rand, vcov = list(vcovHC(lm_inter_fix), vcovHC(lm_inter_rand)))
 ```
 
 ## 7
@@ -319,7 +349,7 @@ Num. obs.      & $40043$       \\
 In this table, we do not show the "average test score", since this is already a constant. We test the joint probability of $\gamma = 0$ with a wald test. It is statistically significant, and thus we reject $H_0$, indicating that fixed effects is more appropriate for this case. 
 
 ## 8
-There is large heterogeneity in returns to schooling by ethnicity. The result from the Mundlak estimation shows that the random effects estimation is not trustworthy, and the panel nature of the data makes pooled regression inappropriate. Hence, we conclude with the result from the fixed effects estimation, that black individuals obtain much less returns from schooling. 
+There is large heterogeneity in returns to schooling by ethnicity. The result from the Mundlak estimation shows that the random effects estimation is not trustworthy, and the panel nature of the data makes pooled regression inappropriate. Hence, we conclude with the result from the fixed effects estimation, that black individuals obtain much less returns from schooling. Morevore, if a random effects model is used, one might infer wrong conclusion about an amount of discrimination on the labour market. Using random effects model, a potential conclusion would be that there is not discrimination on the labour market, which is not true as random effects model is unappropriate to answer this research question.
 
 ## 9
 
@@ -338,9 +368,6 @@ VerbeekNijman(lm_inter_fix, 5)
 
 # second, only in all panels (balanced)
 VerbeekNijman(lm_inter_fix)
-
-
-
 
 
 ```
