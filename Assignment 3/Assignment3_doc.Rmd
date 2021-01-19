@@ -1,0 +1,82 @@
+---
+title: "Econometrics II - Assignment 3"
+author: Floris Holstege, Stanislav Avdeev
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Packes required for subsequent analysis. P_load ensures these will be installed and loaded. 
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(plm, 
+               Formula,
+               car,
+               clubSandwich,
+               lmtest,
+               foreign)
+
+```
+
+```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+# create df with treatment effects
+dfTreatment <- data.frame(N_treated = c(100, 75, 25), N_control = c(100, 25, 75), Avg_Outcome_treated = c(9, 13,10), Avg_Outcome_control = c(7,8,9))
+row.names(dfTreatment) <- c("Purple", "Blue", "Green")
+
+# average treatment effect per group
+ATE_group <- dfTreatment$Avg_Outcome_treated - dfTreatment$Avg_Outcome_control
+
+ATE_treated <- sum(dfTreatment$N_treated/sum(dfTreatment$N_treated) * dfTreatment$Avg_Outcome_treated)
+ATE_control <- sum(dfTreatment$N_control/sum(dfTreatment$N_control) * dfTreatment$Avg_Outcome_control)
+ATE_treated - ATE_control
+
+
+```
+
+
+## Problem 1
+
+Before we answer this question, let's lay out some basic terms that are useful for understanding our subsequent. We define the average treatment effect (ATE) as:
+
+\begin{align*}
+    ATE = \mathbb{E}(\delta) = \mathbb{E}(Y^*_1 - Y^*_0) = \mathbb{E}(Y^*_1) - \mathbb{E}(Y^*_0). 
+\end{align*}
+
+Where $Y^*_1$ is the latent variable of interest for the group that received treatment. For this group, $D_i = 1$. $Y^*_0$ is the latent variable of interest for the group that did not receive treatment. We only observe $\mathbb{E}(Y^*_1)$, since our control group does not receive the treatment. Given we only observe the effect when $D_i = 1$, we define the average treatment effect of the treated as (ATET).
+
+\begin{align*}
+    ATET = \mathbb{E}(\delta | D = 1) = \mathbb{E}(Y^*_1 - Y^*_0 | D = 1) = \mathbb{E}(Y^*_1 | D = 1) - \mathbb{E}(Y^*_0 | D = 1). 
+\end{align*}
+
+If the treatment is assigned randomly, then $(Y^*_{1i}, Y^*_{0i}) \perp D_i$. In this case, ATE = ATET, since there is no significant difference between the characteristics of the treatment and control group. For this question, we assume that the treatment has been randomly assigned, and thus that ATE = ATET. 
+
+\begin{itemize}
+  \item Average treatment per group: $ATE_{purple} = 9 - 7 = 2$ , $ATE_{blue} = 13-8 = 5$, $ATE_{green} = 10-9=1$
+  \item Average treatment for the full population: $ATE = \mathbb{E}(Y^*_1) - \mathbb{E}(Y^*_0) = 10.625 - 7.875 = 2.75$
+  \item Average treatment for the treated: $ATE = ATET = 2.75$
+\end{itemize}
+
+## Problem 2
+
+
+```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+
+dfBonus <- read.dta("Data/bonus.dta")
+
+dfBonus$category <- ifelse(dfBonus$bonus500 == 1, "Low-reward", ifelse(dfBonus$bonus1500 == 1, "High-reward", "Control"))
+
+dfSummaryStats <- dfBonus %>% 
+                              group_by(category) %>% 
+                              summarise(perc_passed_year1 = sum(pass)/ n(), 
+                                        avg_myeduc = mean(myeduc),
+                                        avg_fyeduc = mean(myeduc), 
+                                        avg_p0 = mean(p0),
+                                        math = mean(math[!is.na(math)]),
+                                        perc_job = sum(job[!is.na(job)])/n(),
+                                        avg_effort = mean(effort[!is.na(effort)]))
+
+# COMMENT FLO: How to deal with NA's? I think we need to just mention this as a limitation in checking how different they are. Maybe even quantify how much bias this could result in. 
+
+```
+
+
