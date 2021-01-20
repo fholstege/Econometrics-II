@@ -55,8 +55,8 @@ stargazer(lm_pointsYear1, lm_pointsYear1_2, lm_pointsYear3, lm_pointsYear3_2,
 #------------------------------------------
 # power 
 
-lm_points_high <- lm(dropout ~ bonus1500, dfBonus[dfBonus$category != "Low-reward",])
-lm_points_low <- lm(dropout ~ bonus500, dfBonus[dfBonus$category != "High-reward",])
+lm_points_high <- lm(pass ~ bonus1500, dfBonus[dfBonus$category != "Low-reward",])
+lm_points_low <- lm(pass ~ bonus500, dfBonus[dfBonus$category != "High-reward",])
 
 get_MDE <- function(lm_model, group, alpha, power){
   # Get the data
@@ -90,9 +90,37 @@ get_MDE <- function(lm_model, group, alpha, power){
 get_MDE(lm_points_high, "bonus1500", 0.05, 0.8)
 get_MDE(lm_points_low, "bonus500", 0.05, 0.8)
 
+get_size <- function(lm_model, group, alpha, power, MDE){
+  # Get the data
+  dfModel <- lm_model$model 
+  
+  # N of coefficients
+  n_coef <- length(lm_model$coefficients)
+  
+  # N of observations
+  n <- nrow(dfModel)
+  
+  # N of treated
+  nTreatment <- sum(dfModel[,group])
+  
+  # Get the share of treated
+  p <- nTreatment/n
+  
+  # Get t-value
+  t_alpha <- qt(1-alpha/2, n - n_coef)
+  t_q <- qt(1-power, n - n_coef)
+  
+  # get variance of residuals
+  sigma2 <- var(lm_model$residuals)
+  
+  # get the MDE
+  size <- (((t_alpha - t_q)/MDE)^2) * sigma2/(p*(1-p))
+  size <- round(size, 0)
+  return(size)
+}
 
-
-
+get_size(lm_points_high, "bonus1500", 0.05, 0.8, 0.1)
+get_size(lm_points_low, "bonus500", 0.05, 0.8, 0.1)
 
 
 
