@@ -18,7 +18,7 @@ pacman::p_load(plm,
 
 ```
 
-```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # create df with treatment effects
 dfTreatment <- data.frame(N_treated = c(100, 75, 25), N_control = c(100, 25, 75), Avg_Outcome_treated = c(9, 13,10), Avg_Outcome_control = c(7,8,9))
 row.names(dfTreatment) <- c("Purple", "Blue", "Green")
@@ -34,7 +34,7 @@ ATE_treated - ATE_control
 ```
 
 
-## Problem 1
+# Problem 1
 
 Before we answer this question, let's lay out some basic terms that are useful for understanding our subsequent. We define the average treatment effect (ATE) as:
 
@@ -56,11 +56,11 @@ If the treatment is assigned randomly, then $(Y^*_{1i}, Y^*_{0i}) \perp D_i$. In
   \item Average treatment for the treated: $ATE = ATET = 2.75$
 \end{itemize}
 
-## Problem 2
+# Problem 2
 
-I)
+## I)
 
-```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 
 dfBonus <- read.dta("Data/bonus.dta")
 
@@ -78,25 +78,81 @@ dfSummaryStats <- dfBonus %>%
 
 # COMMENT FLO: How to deal with NA's? I think we need to just mention this as a limitation in checking how different they are. Maybe even quantify how much bias this could result in. 
 
+# Stas: we should not include NA's when we calculate the mean for employment
+
+# There are some differences in average subjective assesment of the student about his probability to succeed. Maybe we can use t.test to check whether the difference is statisticallly significant
+
 ```
 
+Before discussing descriptive statistics, we need to make several assumptions. First, we assume all variables except for total number of credits, an employment status, and an amount of efforts were measured before the randomization. Thus, we can use variables that were measured prior to the randomization to check whether group characteristics are balanced or not.
 
-II)
-III)
+The table below suggests that there are no differences for an average number of years of education for both parents and for high-school math score between the control and two treatment groups. We can conlude that randomazation was successfully done. Further, we are going to look at the following outcomes: a) percentage of stidents who completed all first-year courses and b) total number of credit points after one and three years of studies. 
 
-```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+## II)
 
+As we run a randomized experiment, the orthogonality assumtion of the OLS regression is held. Thus, we are using conventional standard errors as they are more efficient. The basic model is the following:
+
+\begin{align*}
+    COMPLETE_{i} = \alpha_0 +\alpha_1 HIGH_REWARD_{i} + \alpha_2 LOW_REWARD_{i} + \epsilon_{i}
+\end{align*}
+
+We also include the following regressors to estimate an extended model:
+
+\begin{align*}
+    COMPLETE_{i} = \alpha_0 +\alpha_1 HIGH REWARD_{i} + \alpha_2 LOW REWARD_{i} + \alpha_3 EDU_FATHER_{i} + \alpha_4 MATH_{i} + \\ \alpha_5 ASSESSMENT_{i} + \epsilon_{i}
+\end{align*}
+
+Columns (1) and (2) of Table \ref{models} below shows that there is no statistically significant differneces between control and two treatment groups in the probabability of completing all first-yeat courses. The results do not change when we include control variables in the model. Based on the results we conclude that financial incentives do not affect the probability of successfully finishing the first year of the studies. 
+
+\begin{table}[!htbp] \centering 
+  \caption{} 
+  \label{models} 
+\begin{tabular}{@{\extracolsep{5pt}}lccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{3}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-4} 
+\\[-1.8ex] & \multicolumn{3}{c}{pass} \\ 
+\\[-1.8ex] & (1) & (2) & (3)\\ 
+\hline \\[-1.8ex] 
+ categoryHigh-reward & 0.046 & 0.048 & 0.056 \\ 
+  & (0.064) & (0.058) & (0.059) \\ 
+ categoryLow-reward & 0.007 & 0.015 & 0.023 \\ 
+  & (0.064) & (0.057) & (0.058) \\ 
+ math &  & 0.119$^{***}$ & 0.124$^{***}$ \\ 
+  &  & (0.018) & (0.018) \\ 
+ fyeduc &  & $-$0.001 & 0.0003 \\ 
+  &  & (0.007) & (0.007) \\ 
+ p0 &  & 0.249$^{***}$ & 0.170$^{*}$ \\ 
+  &  & (0.095) & (0.098) \\ 
+ effort &  &  & 0.008$^{***}$ \\ 
+  &  &  & (0.002) \\ 
+ job &  &  & $-$0.062 \\ 
+  &  &  & (0.060) \\ 
+ Constant & 0.195$^{***}$ & $-$0.576$^{***}$ & $-$0.678$^{***}$ \\ 
+  & (0.045) & (0.128) & (0.144) \\ 
+\hline \\[-1.8ex] 
+Observations & 249 & 245 & 230 \\ 
+Adjusted R$^{2}$ & $-$0.006 & 0.192 & 0.240 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{3}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+## III)
+
+In the third model we are going to include variables that were measured after the randomization process, an employment status while studying and the amount of study effort. In line with previous results, column (3) of Table \ref{models} yeilds an insignificant effect of getting financial rewards on completing all first-year courses. However, an employment status while studying and the amount of study effort are potentially endogenous variables as they can be correlated with a treatment status of a student. One might argue that a possibility to earn 500 or 1500 guilders could have influenced a student's decision to enter the labour market while study or not. Moreover, it could have influenced an amount of efforts students dedicates to their studies, as more efforts mean higher probability of getting financial rewards. Thus, these two variables are "bad" controls that one should not include in the model.
+
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # define the three LPM models
 LPM_simple <- lm(pass ~ category, data=dfBonus)
 LPM_addedRegressors <- lm(pass ~ category + math + fyeduc + p0, data=dfBonus)
 LPM_allRegressors <- lm(pass ~ category + math + fyeduc + p0 + effort + job, data=dfBonus)
 
 # check adjusted R2 and coefficients
-# COMMENT FLO: There does not seem to be an effect of the treatment
-summary(LPM_simple)
-summary(LPM_addedRegressors)
-summary(LPM_allRegressors)
-
+stargazer(LPM_simple, LPM_addedRegressors, LPM_allRegressors,
+          keep.stat=c("n","adj.rsq"))
 
 # COMMENT FLO: my preferred model is the one with the most variables - 1) All of these capture variables that might influence the relationship, 2) adding these variables increases the adjusted R2, and 3) there is no clear indication of multicollinearity (see correlation matrix and VIF below)
 mX <- dfBonus %>% select(math, fyeduc, p0, effort, job) %>% as.matrix() %>% na.omit()
@@ -108,33 +164,158 @@ vif(LPM_allRegressors)
 ```
 
 
-IV )
+## IV)
 
-```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+LPM_drop <- lm(dropout ~ category, data=dfBonus)
+LPM_drop_all <- lm(dropout ~ category + math + fyeduc + p0, data=dfBonus)
+LOGIT_drop <- glm(dropout ~ category, data=dfBonus, 
+             family = binomial(link = "logit"), x = TRUE)
+LOGIT_drop_all <- glm(dropout ~ category + math + fyeduc + p0, data=dfBonus, 
+             family = binomial(link = "logit"), x = TRUE)
+margins_1 <- maBina(LOGIT_drop, x.mean = FALSE)
+margins_2 <- maBina(LOGIT_drop_all, x.mean = FALSE)
 
 
-LPM_drop <- lm(dropout ~ category + math + fyeduc + p0 + effort + job, data=dfBonus)
+stargazer(LPM_drop, LPM_drop_all, margins_1, margins_2,
+          keep.stat=c("n","adj.rsq"))
+
 LM_pointsYear1 <- lm(stp2001 ~ category + math + fyeduc + p0 + effort + job, data=dfBonus)
 LM_pointsYear3 <- lm(stp2004 ~ category + math + fyeduc + p0 + effort + job, data=dfBonus)
 
-summary(LPM_drop)
-summary(LM_pointsYear1)
-summary(LM_pointsYear3)
+stargazer(lm_drop, lm_drop_2, m1L, m2L,
+          keep.stat=c("n","adj.rsq"),
+          type = "text")
+```
 
-# COMMENT FLO: Took my preferred model here - can obviously change but seems like it again has no effect
+We are going to use a linear probability and a logit models with only a financial dummy reward and other exogenous control variables included. We want to use a logit model to check whether there are going to be big differencess between the two models. As we use data from a randomized experiment we can use a model with only a financial dummy variable included due to the nature of randomization. If an RCT was successfully conducted, the treatment assignment is statistically independent of potential outcomes, i.e. $(Y^*_{0i}, Y^*_{1i}) \perp D_i$. However, controlling for other regressors reduces standard errors around treatment effect. Besides, if the estimated size of the treatment effect differs with and without including covariates, then one should about the additional covariates or the initial randomization process.
+
+Columns (1) and (2) of Table \ref{drop} show the results of the linear probability model while columns (3) and (4) yield the results marginal effects of a logit model. The results indicate that there are no statististically significant effects of a financial rewards on the probability to drop our regardless of the amoung of this reward. Including control variables and using a logit model instead of a linear probability model do not change the results. The results are robust to different specifications and models used.
+
+\begin{table}[!htbp] \centering 
+  \caption{} 
+  \label{drop} 
+\begin{tabular}{@{\extracolsep{5pt}}lcccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{4}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-5} 
+\\[-1.8ex] & \multicolumn{4}{c}{dropout} \\ 
+\\[-1.8ex] & \multicolumn{2}{c}{\textit{OLS}} & \multicolumn{2}{c}{\textit{binary model}} \\ 
+ & \multicolumn{2}{c}{\textit{}} & \multicolumn{2}{c}{\textit{(marginal effect)}} \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4)\\ 
+\hline \\[-1.8ex] 
+ categoryHigh-reward & $-$0.053 & $-$0.053 & $-$0.052 & $-$0.053 \\ 
+  & (0.075) & (0.073) & (0.073) & (0.076) \\ 
+ categoryLow-reward & $-$0.057 & $-$0.069 & $-$0.056 & $-$0.070 \\ 
+  & (0.075) & (0.073) & (0.073) & (0.075) \\ 
+ math &  & $-$0.075$^{***}$ &  & $-$0.076$^{***}$ \\ 
+  &  & (0.023) &  & (0.024) \\ 
+ fyeduc &  & 0.007 &  & 0.006 \\ 
+  &  & (0.009) &  & (0.009) \\ 
+ p0 &  & $-$0.328$^{***}$ &  & $-$0.322$^{***}$ \\ 
+  &  & (0.121) &  & (0.120) \\ 
+ Constant & 0.402$^{***}$ & 0.903$^{***}$ & $-$0.091$^{*}$ & 0.418$^{**}$ \\ 
+  & (0.053) & (0.163) & (0.050) & (0.169) \\ 
+\hline \\[-1.8ex] 
+Observations & 249 & 245 & 249 & 245 \\ 
+Adjusted R$^{2}$ & $-$0.005 & 0.068 &  &  \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{4}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+Columns (1) and (2) of Table \ref{points} show the effects of a financial reward on the number of credits a student earned during the first year while columns (3) and (4) show the results after three years. The effect of a financial reward is zero and not statistically significant either for both outcomes.
+
+##V)
+
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+lm_points_high <- lm(pass ~ bonus1500, dfBonus[dfBonus$category != "Low-reward",])
+lm_points_low <- lm(pass ~ bonus500, dfBonus[dfBonus$category != "High-reward",])
+
+get_MDE <- function(lm_model, group, alpha, power){
+  # Get the data
+  dfModel <- lm_model$model 
+  
+  # N of coefficients
+  n_coef <- length(lm_model$coefficients)
+  
+  # N of observations
+  n <- nrow(dfModel)
+  
+  # N of treated
+  nTreatment <- sum(dfModel[,group])
+  
+  # Get the share of treated
+  p <- nTreatment/n
+  
+  # Get t-value
+  t_alpha <- qt(1-alpha/2, n - n_coef)
+  t_q <- qt(1-power, n - n_coef)
+  
+  # get variance of residuals
+  sigma2 <- var(lm_model$residuals)
+  
+  # get the MDE
+  MDE <- (t_alpha - t_q) * sqrt(1/(p*(1-p))) * sqrt(sigma2/n)
+  
+  return(MDE)
+}
+
+get_MDE(lm_points_high, "bonus1500", 0.05, 0.8)
+get_MDE(lm_points_low, "bonus500", 0.05, 0.8)
+
 
 ```
 
+To estimate the minimum detectable effect size of the financial reward on the probability to complete all first-year courses, we are using the following formula:
 
-V)
-VI)
+\begin{align*}
+    MDE = (t_{1-\alpha/2} - t_{1-q})\sqrt{\frac{1}{p(1-p)}}\sqrt{\frac{\sigma^2}{n}}
+\end{align*}
 
-```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+where $alpha$ - significance level; $q$ - power; $p$ - a share of treated students; $\sigma^2$ - variance of OLS residuals. We use conventional values for $alpha = 0.05$ and $q = 0.8$. 
 
+## VI)
 
-n <- nrow(dfBonus)
-p <- 
+```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+get_size <- function(lm_model, group, alpha, power, MDE){
+  # Get the data
+  dfModel <- lm_model$model 
+  
+  # N of coefficients
+  n_coef <- length(lm_model$coefficients)
+  
+  # N of observations
+  n <- nrow(dfModel)
+  
+  # N of treated
+  nTreatment <- sum(dfModel[,group])
+  
+  # Get the share of treated
+  p <- nTreatment/n
+  
+  # Get t-value
+  t_alpha <- qt(1-alpha/2, n - n_coef)
+  t_q <- qt(1-power, n - n_coef)
+  
+  # get variance of residuals
+  sigma2 <- var(lm_model$residuals)
+  
+  # get the MDE
+  size <- (((t_alpha - t_q)/MDE)^2) * sigma2/(p*(1-p))
+  size <- round(size, 0)
+  return(size)
+}
 
-
-
+get_size(lm_points_high, "bonus1500", 0.05, 0.8, 0.1)
+get_size(lm_points_low, "bonus500", 0.05, 0.8, 0.1)
 ```
+
+To increase the pass rate by 10\%, we need to calculate the sample size according to this formula:
+
+\begin{align*}
+    n = \left(\frac{t_{1-\alpha/2} - t_{1-q}}{MDE}\right)^2\frac{\sigma^2}{p(1-p)}
+\end{align*}
+
