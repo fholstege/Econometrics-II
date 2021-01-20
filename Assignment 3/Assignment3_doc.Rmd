@@ -58,6 +58,7 @@ If the treatment is assigned randomly, then $(Y^*_{1i}, Y^*_{0i}) \perp D_i$. In
 
 ## Problem 2
 
+I)
 
 ```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 
@@ -80,3 +81,60 @@ dfSummaryStats <- dfBonus %>%
 ```
 
 
+II)
+III)
+
+```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+
+# define the three LPM models
+LPM_simple <- lm(pass ~ category, data=dfBonus)
+LPM_addedRegressors <- lm(pass ~ category + math + fyeduc + p0, data=dfBonus)
+LPM_allRegressors <- lm(pass ~ category + math + fyeduc + p0 + effort + job, data=dfBonus)
+
+# check adjusted R2 and coefficients
+# COMMENT FLO: There does not seem to be an effect of the treatment
+summary(LPM_simple)
+summary(LPM_addedRegressors)
+summary(LPM_allRegressors)
+
+
+# COMMENT FLO: my preferred model is the one with the most variables - 1) All of these capture variables that might influence the relationship, 2) adding these variables increases the adjusted R2, and 3) there is no clear indication of multicollinearity (see correlation matrix and VIF below)
+mX <- dfBonus %>% select(math, fyeduc, p0, effort, job) %>% as.matrix() %>% na.omit()
+cor(mX)
+vif(LPM_allRegressors)
+
+
+
+```
+
+
+IV )
+
+```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+
+
+LPM_drop <- lm(dropout ~ category + math + fyeduc + p0 + effort + job, data=dfBonus)
+LM_pointsYear1 <- lm(stp2001 ~ category + math + fyeduc + p0 + effort + job, data=dfBonus)
+LM_pointsYear3 <- lm(stp2004 ~ category + math + fyeduc + p0 + effort + job, data=dfBonus)
+
+summary(LPM_drop)
+summary(LM_pointsYear1)
+summary(LM_pointsYear3)
+
+# COMMENT FLO: Took my preferred model here - can obviously change but seems like it again has no effect
+
+```
+
+
+V)
+VI)
+
+```{include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
+
+
+n <- nrow(dfBonus)
+p <- 
+
+
+
+```
