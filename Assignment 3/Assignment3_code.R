@@ -60,23 +60,20 @@ summary(LPM_drop)
 summary(LM_pointsYear1)
 summary(LM_pointsYear3)
 
-length(coef(LPM_allRegressors))
 
-
-
-n <- nrow(dfBonus)
-p <- sum(dfBonus$bonus500) + sum(dfBonus$bonus1500)
+# define power and alpha
 power <- 0.8
 alpha <- 0.05
 
-t_alpha <- qt(1-alpha/2, df=n-8)
-t_q <- qt(1-power, df=n-8)
-t_alpha - t_q
+# define model for only low, and only high
 
-nrow(LPM_allRegressors$model)
+qnorm(1-alpha/2, 0,1)
 
-df <- LPM_allRegressors$model
-df[,"category"]
+dfBonus$bonus500
+
+LM_all_low <- lm(pass ~ bonus500 + math + fyeduc + p0 + effort + job, data=dfBonus %>% filter(bonus1500 != 1))
+LM_all_high <- lm(pass ~ bonus1500 + math + fyeduc + p0 + effort + job, data=dfBonus %>% filter(bonus500 != 1))
+
 
 get_MDE <- function(Model_exp, sGroup, fAlpha,fPower){
   
@@ -95,19 +92,44 @@ get_MDE <- function(Model_exp, sGroup, fAlpha,fPower){
   # get degrees of freedom
   iDF <- length(Model_exp$coefficients)
   
+  # get appropriate t-values
   t_alpha <- qt(1-fAlpha/2, df = iDF)
   t_q <- qt(1-fPower, df = iDF)
   
+  # get variance of residuals
+  Sigma2 <- var(Model_exp$residuals)
+  
+  # get the MDE
+  MDE <- (t_alpha - t_q) * sqrt(1/(p*(1-p)))* sqrt(Sigma2/n)
+  
+  return(MDE)
+  
+}
+
+
+
+
+MDE_low <- get_MDE(LM_all_low, "bonus500", alpha, power)
+MDE_high <- get_MDE(LM_all_high, "bonus1500", alpha, power)  
+
+get_n_givenMDE <- function(Model_exp, sGroup, fAlpha, fPower, MDE, p, Sigma2=1){
+  
+  # get t values
+  t_alpha <- qnorm(1-fAlpha/2, 0,Sigma2)
+  t_q <-qnorm(1-fPower, 0,Sigma2)
+
+  # get variance of residuals
+  z <- (1/sqrt(p*(1-p)))*(1/(t_alpha - t_q))
+
+  n <- Sigma2/(z*MDE)^2
+  
+  return(n)
   
   
 }
-  
-  
-  
-  
-  
-  
-}
+
+n_low <- get_n_givenMDE(LM_all_low, "bonus500", alpha, power, 0.1, 0.5)
+
 
 
 
