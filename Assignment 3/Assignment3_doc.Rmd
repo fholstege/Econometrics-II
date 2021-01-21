@@ -297,8 +297,8 @@ get_size <- function(lm_model, group, alpha, power, MDE){
   p <- nTreatment/n
   
   # Get t-value
-  t_alpha <- qt(1-alpha/2, n - n_coef)
-  t_q <- qt(1-power, n - n_coef)
+  t_alpha <- 1.96
+  t_q <- -0.84
   
   # get variance of residuals
   sigma2 <- var(lm_model$residuals)
