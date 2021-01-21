@@ -14,7 +14,8 @@ pacman::p_load(plm,
                car,
                clubSandwich,
                lmtest,
-               foreign)
+               foreign,
+               tidyverse)
 
 ```
 
@@ -231,8 +232,8 @@ Columns (1) and (2) of Table \ref{points} show the effects of a financial reward
 ##V)
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
-lm_points_high <- lm(pass ~ bonus1500, dfBonus[dfBonus$category != "Low-reward",])
-lm_points_low <- lm(pass ~ bonus500, dfBonus[dfBonus$category != "High-reward",])
+lm_points_high <- lm(pass ~ bonus1500 + math + fyeduc + p0, dfBonus[dfBonus$category != "Low-reward",])
+lm_points_low <- lm(pass ~ bonus500 + math + fyeduc + p0, dfBonus[dfBonus$category != "High-reward",])
 
 get_MDE <- function(lm_model, group, alpha, power){
   # Get the data
@@ -265,7 +266,6 @@ get_MDE <- function(lm_model, group, alpha, power){
 
 get_MDE(lm_points_high, "bonus1500", 0.05, 0.8)
 get_MDE(lm_points_low, "bonus500", 0.05, 0.8)
-
 
 ```
 
