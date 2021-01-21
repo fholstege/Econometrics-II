@@ -15,7 +15,8 @@ pacman::p_load(plm,
                clubSandwich,
                lmtest,
                foreign,
-               tidyverse)
+               tidyverse,
+               xtable)
 
 ```
 
@@ -63,7 +64,8 @@ If the treatment is assigned randomly, then $(Y^*_{1i}, Y^*_{0i}) \perp D_i$. In
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 
-dfBonus <- read.dta("Data/bonus.dta")
+
+dfBonus <- read.dta("../Data/bonus.dta")
 
 dfBonus$category <- ifelse(dfBonus$bonus500 == 1, "Low-reward", ifelse(dfBonus$bonus1500 == 1, "High-reward", "Control"))
 
@@ -71,11 +73,16 @@ dfSummaryStats <- dfBonus %>%
                               group_by(category) %>% 
                               summarise(perc_passed_year1 = sum(pass)/ n(), 
                                         avg_myeduc = mean(myeduc),
-                                        avg_fyeduc = mean(myeduc), 
+                                        avg_fyeduc = mean(fyeduc), 
                                         avg_p0 = mean(p0),
                                         math = mean(math[!is.na(math)]),
                                         perc_job = sum(job[!is.na(job)])/n(),
                                         avg_effort = mean(effort[!is.na(effort)]))
+
+
+xtable(dfSummaryStats, digits = 3)
+t.test(dfBonus[dfBonus$category == "Control",]$effort, dfBonus[dfBonus$category == "High-reward",]$effort)
+
 
 # COMMENT FLO: How to deal with NA's? I think we need to just mention this as a limitation in checking how different they are. Maybe even quantify how much bias this could result in. 
 
@@ -87,23 +94,44 @@ dfSummaryStats <- dfBonus %>%
 
 Before discussing descriptive statistics, we need to make several assumptions. First, we assume all variables except for total number of credits, an employment status, and an amount of efforts were measured before the randomization. Thus, we can use variables that were measured prior to the randomization to check whether group characteristics are balanced or not.
 
-The table below suggests that there are no differences for an average number of years of education for both parents and for high-school math score between the control and two treatment groups. We can conlude that randomazation was successfully done. Further, we are going to look at the following outcomes: a) percentage of stidents who completed all first-year courses and b) total number of credit points after one and three years of studies. 
+The table below suggests that there are no differences for an average number of years of education for both parents and for high-school math score between the control and two treatment groups. We quickly checked if the difference between the effort for students in the control group and the high-reward group was statistically significant - its not (student's t-test returns a p-value of 0.45), and so we feel comfortable in proceeding. 
+
+We are going to look at the following outcomes: a) percentage of students who completed all first-year courses and b) total number of credit points after one and three years of studies. 
+
+% latex table generated in R 4.0.2 by xtable 1.8-4 package
+% Thu Jan 21 21:08:13 2021
+\begin{table}[ht]
+\centering
+\begin{tabular}{rlrrrrrrr}
+  \hline
+ & Group & perc\_passed\_year1 & avg\_myeduc & avg\_fyeduc & avg\_p0 & math & perc\_job & avg\_effort \\ 
+  \hline
+1 & Control & 0.195 & 12.293 & 13.378 & 0.553 & 5.476 & 0.695 & 19.549 \\ 
+  2 & High-reward & 0.241 & 12.590 & 13.422 & 0.573 & 5.388 & 0.747 & 18.303 \\ 
+  3 & Low-reward & 0.202 & 12.119 & 13.524 & 0.530 & 5.386 & 0.810 & 18.477 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+
+
 
 ## II)
 
 As we run a randomized experiment, the orthogonality assumtion of the OLS regression is held. Thus, we are using conventional standard errors as they are more efficient. The basic model is the following:
 
 \begin{align*}
-    COMPLETE_{i} = \alpha_0 +\alpha_1 HIGH_REWARD_{i} + \alpha_2 LOW_REWARD_{i} + \epsilon_{i}
+    COMPLETE_{i} = \alpha_0 +\alpha_1 HIGH\_REWARD_{i} + \alpha_2 LOW\_REWARD_{i} + \epsilon_{i}
 \end{align*}
 
 We also include the following regressors to estimate an extended model:
 
 \begin{align*}
-    COMPLETE_{i} = \alpha_0 +\alpha_1 HIGH REWARD_{i} + \alpha_2 LOW REWARD_{i} + \alpha_3 EDU_FATHER_{i} + \alpha_4 MATH_{i} + \\ \alpha_5 ASSESSMENT_{i} + \epsilon_{i}
+    COMPLETE_{i} = \alpha_0 +\alpha_1 HIGH\_REWARD_{i} + \alpha_2 LOW\_REWARD_{i} + \alpha_3 EDU\_FATHER_{i} + \alpha_4 MATH_{i} + \\ \alpha_5 ASSESSMENT_{i} + \epsilon_{i}
 \end{align*}
 
-Columns (1) and (2) of Table \ref{models} below shows that there is no statistically significant differneces between control and two treatment groups in the probabability of completing all first-yeat courses. The results do not change when we include control variables in the model. Based on the results we conclude that financial incentives do not affect the probability of successfully finishing the first year of the studies. 
+Columns (1) and (2) of Table \ref{models} below shows that there is no statistically significant differences between control and two treatment groups in the probabability of completing all first-year courses. The results do not change when we include the additional control variables. Based on the results we conclude that financial incentives do not affect the probability of successfully finishing the first year of the studies. 
 
 \begin{table}[!htbp] \centering 
   \caption{} 
@@ -143,7 +171,7 @@ Adjusted R$^{2}$ & $-$0.006 & 0.192 & 0.240 \\
 
 ## III)
 
-In the third model we are going to include variables that were measured after the randomization process, an employment status while studying and the amount of study effort. In line with previous results, column (3) of Table \ref{models} yeilds an insignificant effect of getting financial rewards on completing all first-year courses. However, an employment status while studying and the amount of study effort are potentially endogenous variables as they can be correlated with a treatment status of a student. One might argue that a possibility to earn 500 or 1500 guilders could have influenced a student's decision to enter the labour market while study or not. Moreover, it could have influenced an amount of efforts students dedicates to their studies, as more efforts mean higher probability of getting financial rewards. Thus, these two variables are "bad" controls that one should not include in the model.
+In the third model we are going to include variables that were measured after the randomization process, dummy variable on whether the student had  a job while studying and the amount of study effort. In line with previous results, column (3) of Table \ref{models} yields an insignificant effect of getting financial rewards on completing all first-year courses. However, an employment status while studying and the amount of study effort are potentially endogenous variables as they can be correlated with a treatment status of a student. One might argue that a possibility to earn 500 or 1500 guilders could have influenced a student's decision to enter the labour market while studying. Moreover, it could have influenced the amount of effort a student dedicates to their studies, as more efforts mean higher probability of getting financial rewards. Thus, these two variables are "bad" controls that one should not include in the model.
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # define the three LPM models
@@ -229,13 +257,13 @@ Adjusted R$^{2}$ & $-$0.005 & 0.068 &  &  \\
 
 Columns (1) and (2) of Table \ref{points} show the effects of a financial reward on the number of credits a student earned during the first year while columns (3) and (4) show the results after three years. The effect of a financial reward is zero and not statistically significant either for both outcomes.
 
-##V)
+## V)
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
-lm_points_high <- lm(pass ~ bonus1500 + math + fyeduc + p0, dfBonus[dfBonus$category != "Low-reward",])
-lm_points_low <- lm(pass ~ bonus500 + math + fyeduc + p0, dfBonus[dfBonus$category != "High-reward",])
+lm_pass_high <- lm(pass ~ bonus1500 + math + fyeduc + p0, dfBonus[dfBonus$category != "Low-reward",])
+lm_pass_low <- lm(pass ~ bonus500 + math + fyeduc + p0, dfBonus[dfBonus$category != "High-reward",])
 
-get_MDE <- function(lm_model, group, alpha, power){
+get_MDE <- function(lm_model, group, alpha, power, dependent=NULL){
   # Get the data
   dfModel <- lm_model$model 
   
@@ -256,7 +284,18 @@ get_MDE <- function(lm_model, group, alpha, power){
   t_q <- qt(1-power, n - n_coef)
   
   # get variance of residuals
-  sigma2 <- var(lm_model$residuals)
+  # Floris: Stanislav, here I program the option to use the passing rate of the population as the variance
+  if(is.null(dependent)){
+    
+    sigma2 <- var(lm_model$residuals)
+    
+  }else if (is.character(dependent)){
+    
+    vY <- dfModel[,dependent]
+    perc_pass <- sum(vY)/n
+    sigma2 <- perc_pass* (1- perc_pass)
+    
+  }
   
   # get the MDE
   MDE <- (t_alpha - t_q) * sqrt(1/(p*(1-p))) * sqrt(sigma2/n)
@@ -264,8 +303,9 @@ get_MDE <- function(lm_model, group, alpha, power){
   return(MDE)
 }
 
-get_MDE(lm_points_high, "bonus1500", 0.05, 0.8)
-get_MDE(lm_points_low, "bonus500", 0.05, 0.8)
+nrow(lm_pass_low$model)
+get_MDE(lm_pass_high, "bonus1500", 0.05, 0.8, "pass")
+get_MDE(lm_pass_low, "bonus500", 0.05, 0.8, "pass")
 
 ```
 
@@ -275,12 +315,36 @@ To estimate the minimum detectable effect size of the financial reward on the pr
     MDE = (t_{1-\alpha/2} - t_{1-q})\sqrt{\frac{1}{p(1-p)}}\sqrt{\frac{\sigma^2}{n}}
 \end{align*}
 
-where $alpha$ - significance level; $q$ - power; $p$ - a share of treated students; $\sigma^2$ - variance of OLS residuals. We use conventional values for $alpha = 0.05$ and $q = 0.8$. 
+where $alpha$ - significance level; $q$ - power; $p$ - a share of treated students; $\sigma^2$ - variance of OLS residuals. We specify these parameters as follwos: 
+\begin{itemize}
+  \item We use conventional values for $alpha = 0.05$ and $q = 0.8$. 
+  \item For the t-values, we pick the degrees of freedom as $n - k$, with $n$ the number of observations and $k$ the number of coefficients. 
+  \item For $\sigma^2$: the residuals should follow the distribution of a bernouli value (since the only possible values are 1 and 0). The variance of a bernouli variable is $P$(1-$P$), with $P$ as the probability of the variable taking the value of 1. We estimate $P$ as the percentage of students in the population (both control and treated) that passed the first year. 
+\end{itemize}
+
+Our sample of students consists of three groups; control, low-reward, and high-reward. We do not want to put all of these together in the same MDE calculation. The reason for this is that if we treat the low-reward and high-reward as one treatment group, the resulting MDE would b would tell us the MDE if low and high-reward received the same treatment - but this is not the case. As such, we conduct the MDE calculation separately for two models; one with the control group and the low-reward, and one with the control group and the high-reward. In both cases, we used the model as specified in question II) with the control variables. 
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{ccc}
+  \hline
+  Test & sample size & MDE \\ 
+  \hline
+Control vs Low reward & 165 & 19.3\% \\
+ Control vs High reward & 162 & 20.5\% \\
+   \hline
+\end{tabular}
+\end{table}
+
+
+
 
 ## VI)
 
+
+
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
-get_size <- function(lm_model, group, alpha, power, MDE){
+get_size <- function(lm_model, group, alpha, power, MDE, dependent =NULL){
   # Get the data
   dfModel <- lm_model$model 
   
@@ -301,21 +365,51 @@ get_size <- function(lm_model, group, alpha, power, MDE){
   t_q <- -0.84
   
   # get variance of residuals
-  sigma2 <- var(lm_model$residuals)
+  # Floris: Stanislav, here I program the option to use the passing rate of the population as the variance
+  if(is.null(dependent)){
+    
+    sigma2 <- var(lm_model$residuals)
+    
+  }else if (is.character(dependent)){
+    
+    vY <- dfModel[,dependent]
+    perc_pass <- sum(vY)/n
+    sigma2 <- perc_pass* (1- perc_pass)
+    
+  }
   
+
   # get the MDE
   size <- (((t_alpha - t_q)/MDE)^2) * sigma2/(p*(1-p))
   size <- round(size, 0)
   return(size)
 }
 
-get_size(lm_points_high, "bonus1500", 0.05, 0.8, 0.1)
-get_size(lm_points_low, "bonus500", 0.05, 0.8, 0.1)
+
+
+get_size(lm_points_high, "bonus1500", 0.05, 0.8, 0.1, "pass")
+get_size(lm_points_low, "bonus500", 0.05, 0.8, 0.1, "pass")
 ```
 
-To increase the pass rate by 10\%, we need to calculate the sample size according to this formula:
+For an MDE of 10\%, we need to calculate the sample size according to this formula:
 
 \begin{align*}
     n = \left(\frac{t_{1-\alpha/2} - t_{1-q}}{MDE}\right)^2\frac{\sigma^2}{p(1-p)}
 \end{align*}
+
+We make the same assumptions as specified in the previous question, with one exception - since we do not know the N to find the degrees of freedom for the t-values, we presume a very large n, in which the t-distribution converges to a normal distribution. 
+
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{cccc}
+  \hline
+ Test & sample size & Desired MDE & Required sample size\\ 
+  \hline
+Control vs Low reward & 165 & 10\% & 531 \\
+ Control vs High reward & 162 & 10\% & 490 \\
+   \hline
+\end{tabular}
+\end{table}
+
 
