@@ -16,7 +16,8 @@ pacman::p_load(plm,
                lmtest,
                foreign,
                tidyverse,
-               xtable)
+               xtable,
+               stargazer)
 
 ```
 
@@ -58,6 +59,8 @@ If the treatment is assigned randomly, then $(Y^*_{1i}, Y^*_{0i}) \perp D_i$. In
   \item Average treatment for the treated: $ATE = ATET = 2.75$
 \end{itemize}
 
+\pagebreak 
+
 # Problem 2
 
 ## I)
@@ -94,13 +97,13 @@ t.test(dfBonus[dfBonus$category == "Control",]$effort, dfBonus[dfBonus$category 
 
 Before discussing descriptive statistics, we need to make several assumptions. First, we assume all variables except for total number of credits, an employment status, and an amount of efforts were measured before the randomization. Thus, we can use variables that were measured prior to the randomization to check whether group characteristics are balanced or not.
 
-The table below suggests that there are no differences for an average number of years of education for both parents and for high-school math score between the control and two treatment groups. We quickly checked if the difference between the effort for students in the control group and the high-reward group was statistically significant - its not (student's t-test returns a p-value of 0.45), and so we feel comfortable in proceeding. 
+Table \ref{stats} suggests that there are no differences for an average number of years of education for both parents and for high-school math score between the control and two treatment groups. We quickly checked if the difference between the effort for students in the control group and the high-reward group was statistically significant - its not (student's t-test returns a p-value of 0.45), and so we feel comfortable in proceeding. 
 
 We are going to look at the following outcomes: a) percentage of students who completed all first-year courses and b) total number of credit points after one and three years of studies. 
 
-% latex table generated in R 4.0.2 by xtable 1.8-4 package
-% Thu Jan 21 21:08:13 2021
 \begin{table}[ht]
+  \caption{Mean values for observed characteristics by groups} 
+  \label{stats} 
 \centering
 \begin{tabular}{rlrrrrrrr}
   \hline
@@ -131,10 +134,10 @@ We also include the following regressors to estimate an extended model:
     COMPLETE_{i} = \alpha_0 +\alpha_1 HIGH\_REWARD_{i} + \alpha_2 LOW\_REWARD_{i} + \alpha_3 EDU\_FATHER_{i} + \alpha_4 MATH_{i} + \\ \alpha_5 ASSESSMENT_{i} + \epsilon_{i}
 \end{align*}
 
-Columns (1) and (2) of Table \ref{models} below shows that there is no statistically significant differences between control and two treatment groups in the probabability of completing all first-year courses. The results do not change when we include the additional control variables. Based on the results we conclude that financial incentives do not affect the probability of successfully finishing the first year of the studies. 
+Columns (1) and (2) of Table \ref{models} below show that there are no statistically significant differences between control and two treatment groups in the probabability of completing all first-year courses. The results do not change when we include the additional control variables. Based on the results we conclude that financial incentives do not affect the probability of successfully finishing the first year of the studies. 
 
 \begin{table}[!htbp] \centering 
-  \caption{} 
+  \caption{The effect of a financial reward on completing all first-year courses} 
   \label{models} 
 \begin{tabular}{@{\extracolsep{5pt}}lccc} 
 \\[-1.8ex]\hline 
@@ -171,7 +174,7 @@ Adjusted R$^{2}$ & $-$0.006 & 0.192 & 0.240 \\
 
 ## III)
 
-In the third model we are going to include variables that were measured after the randomization process, dummy variable on whether the student had  a job while studying and the amount of study effort. In line with previous results, column (3) of Table \ref{models} yields an insignificant effect of getting financial rewards on completing all first-year courses. However, an employment status while studying and the amount of study effort are potentially endogenous variables as they can be correlated with a treatment status of a student. One might argue that a possibility to earn 500 or 1500 guilders could have influenced a student's decision to enter the labour market while studying. Moreover, it could have influenced the amount of effort a student dedicates to their studies, as more efforts mean higher probability of getting financial rewards. Thus, these two variables are "bad" controls that one should not include in the model.
+In the third model we are going to include variables that were measured after the randomization process: dummy variable on whether the student had  a job while studying and the amount of study effort. In line with previous results, column (3) of Table \ref{models} yields an insignificant effect of getting financial rewards on completing all first-year courses. However, an employment status while studying and the amount of study effort are potentially endogenous variables as they can be correlated with a treatment status of a student. One might argue that a possibility to earn 500 or 1500 guilders could have influenced a student's decision to enter the labour market while studying. Moreover, it could have influenced the amount of effort a student dedicates to their studies, as more efforts mean higher probability of getting financial rewards. Thus, these two variables are "bad" controls that one should not include in the model.
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
 # define the three LPM models
@@ -209,20 +212,21 @@ margins_2 <- maBina(LOGIT_drop_all, x.mean = FALSE)
 stargazer(LPM_drop, LPM_drop_all, margins_1, margins_2,
           keep.stat=c("n","adj.rsq"))
 
-LM_pointsYear1 <- lm(stp2001 ~ category + math + fyeduc + p0 + effort + job, data=dfBonus)
-LM_pointsYear3 <- lm(stp2004 ~ category + math + fyeduc + p0 + effort + job, data=dfBonus)
+LM_pointsYear1 <- lm(stp2001 ~ category, data=dfBonus)
+LM_pointsYear1_2 <- lm(stp2001 ~ category + math + fyeduc + p0, data=dfBonus)
+LM_pointsYear3 <- lm(stp2004 ~ category, data=dfBonus)
+LM_pointsYear3_2 <- lm(stp2004 ~ category + math + fyeduc + p0, data=dfBonus)
 
-stargazer(lm_drop, lm_drop_2, m1L, m2L,
-          keep.stat=c("n","adj.rsq"),
-          type = "text")
+stargazer(LM_pointsYear1, LM_pointsYear1_2, LM_pointsYear3, LM_pointsYear3_2,
+          keep.stat=c("n","adj.rsq"))
 ```
 
 We are going to use a linear probability and a logit models with only a financial dummy reward and other exogenous control variables included. We want to use a logit model to check whether there are going to be big differencess between the two models. As we use data from a randomized experiment we can use a model with only a financial dummy variable included due to the nature of randomization. If an RCT was successfully conducted, the treatment assignment is statistically independent of potential outcomes, i.e. $(Y^*_{0i}, Y^*_{1i}) \perp D_i$. However, controlling for other regressors reduces standard errors around treatment effect. Besides, if the estimated size of the treatment effect differs with and without including covariates, then one should about the additional covariates or the initial randomization process.
 
-Columns (1) and (2) of Table \ref{drop} show the results of the linear probability model while columns (3) and (4) yield the results marginal effects of a logit model. The results indicate that there are no statististically significant effects of a financial rewards on the probability to drop our regardless of the amoung of this reward. Including control variables and using a logit model instead of a linear probability model do not change the results. The results are robust to different specifications and models used.
+Columns (1) and (2) of Table \ref{drop} show the results of the linear probability model while columns (3) and (4) yield the marginal effects of a logit model. The results indicate that there are no statististically significant effects of a financial reward on the probability to drop out regardless of the amoung of this reward. Including control variables and using a logit model instead of a linear probability model do not change the results. The results are robust to different specifications and models used.
 
 \begin{table}[!htbp] \centering 
-  \caption{} 
+  \caption{The effect of a financial reward on the probability to drop out} 
   \label{drop} 
 \begin{tabular}{@{\extracolsep{5pt}}lcccc} 
 \\[-1.8ex]\hline 
@@ -256,6 +260,38 @@ Adjusted R$^{2}$ & $-$0.005 & 0.068 &  &  \\
 \end{table} 
 
 Columns (1) and (2) of Table \ref{points} show the effects of a financial reward on the number of credits a student earned during the first year while columns (3) and (4) show the results after three years. The effect of a financial reward is zero and not statistically significant either for both outcomes.
+
+\begin{table}[!htbp] \centering 
+  \caption{The effect of a financial reward on the number of credits} 
+  \label{points} 
+\begin{tabular}{@{\extracolsep{5pt}}lcccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{4}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-5} 
+\\[-1.8ex] & \multicolumn{2}{c}{stp2001} & \multicolumn{2}{c}{stp2004} \\ 
+\\[-1.8ex] & (1) & (2) & (3) & (4)\\ 
+\hline \\[-1.8ex] 
+ categoryHigh-reward & $-$0.437 & $-$0.262 & $-$1.185 & $-$0.673 \\ 
+  & (3.460) & (3.038) & (9.809) & (9.080) \\ 
+ categoryLow-reward & $-$1.531 & $-$0.699 & $-$2.452 & $-$1.306 \\ 
+  & (3.450) & (3.010) & (9.780) & (8.998) \\ 
+ math &  & 6.454$^{***}$ &  & 15.127$^{***}$ \\ 
+  &  & (0.960) &  & (2.869) \\ 
+ fyeduc &  & $-$0.513 &  & $-$1.469 \\ 
+  &  & (0.374) &  & (1.118) \\ 
+ p0 &  & 21.632$^{***}$ &  & 44.689$^{***}$ \\ 
+  &  & (5.026) &  & (15.023) \\ 
+ Constant & 33.152$^{***}$ & $-$7.281 & 84.274$^{***}$ & $-$3.596 \\ 
+  & (2.454) & (6.745) & (6.957) & (20.162) \\ 
+\hline \\[-1.8ex] 
+Observations & 249 & 245 & 249 & 245 \\ 
+Adjusted R$^{2}$ & $-$0.007 & 0.235 & $-$0.008 & 0.142 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{4}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table}
 
 ## V)
 
@@ -315,14 +351,14 @@ To estimate the minimum detectable effect size of the financial reward on the pr
     MDE = (t_{1-\alpha/2} - t_{1-q})\sqrt{\frac{1}{p(1-p)}}\sqrt{\frac{\sigma^2}{n}}
 \end{align*}
 
-where $alpha$ - significance level; $q$ - power; $p$ - a share of treated students; $\sigma^2$ - variance of OLS residuals. We specify these parameters as follwos: 
+where $\alpha$ - significance level; $q$ - power; $p$ - a share of treated students; $\sigma^2$ - variance of OLS residuals. We specify these parameters as follows: 
 \begin{itemize}
   \item We use conventional values for $alpha = 0.05$ and $q = 0.8$. 
   \item For the t-values, we pick the degrees of freedom as $n - k$, with $n$ the number of observations and $k$ the number of coefficients. 
   \item For $\sigma^2$: the residuals should follow the distribution of a bernouli value (since the only possible values are 1 and 0). The variance of a bernouli variable is $P$(1-$P$), with $P$ as the probability of the variable taking the value of 1. We estimate $P$ as the percentage of students in the population (both control and treated) that passed the first year. 
 \end{itemize}
 
-Our sample of students consists of three groups; control, low-reward, and high-reward. We do not want to put all of these together in the same MDE calculation. The reason for this is that if we treat the low-reward and high-reward as one treatment group, the resulting MDE would b would tell us the MDE if low and high-reward received the same treatment - but this is not the case. As such, we conduct the MDE calculation separately for two models; one with the control group and the low-reward, and one with the control group and the high-reward. In both cases, we used the model as specified in question II) with the control variables. 
+Our sample of students consists of three groups; control, low-reward, and high-reward. We do not want to put all of these together in the same MDE calculation. The reason for this is that if we treat the low-reward and high-reward as one treatment group, the resulting MDE would tell us if low and high-reward received the same treatment - but this is not the case. As such, we conduct the MDE calculation separately for two models; one with the control group and the low-reward, and one with the control group and the high-reward. In both cases, we used the model as specified in question II) with the control variables. 
 
 \begin{table}[ht]
 \centering
