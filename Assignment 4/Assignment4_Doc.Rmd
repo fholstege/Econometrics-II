@@ -28,7 +28,14 @@ pacman::p_load(plm,
 dfJudge <- data.frame( cases = c(0.7, 0.3, 0.4, 0.6), arrests = c(0.4, 0.6, 0.2, 0.5) )
 rownames(dfJudge) <- c("Jones-Prison", "Jones-Other", "Smith-Prison", "Smith-Other")
 
-wald_est <- (dfJudge$arrests[1]- dfJudge$arrests[3])/(dfJudge$cases[1] - dfJudge$cases[3])
+PY_1_Z_1 = sum(dfJudge$perc_arrest_cond[c(1,2)])
+PY_1_Z_0 = sum(dfJudge$perc_arrest_cond[c(3,4)])
+PD_1_Z_1 = dfJudge$perc_sentence[1]
+PD_1_Z_0 = dfJudge$perc_sentence[3]
+
+
+
+wald_est <- (PY_1_Z_1 - PY_1_Z_0)/ (PD_1_Z_1 - PD_1_Z_0)
 wald_est
 
 
@@ -51,10 +58,10 @@ Where $P(Y = 1)$ is the probability of an arrest in the subsequent 3 years, $Z$ 
 To estimate the probabilities, we simply use the \% of each event occuring in our sample. The Wald estimator then becomes: 
 
 \begin{align*}
-\beta_{wald} =  \frac{0.4 - 0.2}{0.7 - 0.4} = \frac{0.2}{0.3} = \frac{2}{3}
+\beta_{wald} =  \frac{0.46 - 0.38}{0.7 - 0.4} = \frac{0.08}{0.3} = 26 \frac{2/3}\%
 \end{align*}
 
-This implies that if one receives a prison sentence, one is \frac{2}{3} more likely to be arrested in the subsequent 3 years. This effect holds for all compliers, e.g. those who underwent the treatment. In this case, if the prison sentence is strongly enforced (e.g. nobody is able to escape), then presumably the effect holds for the whole population, since all are complying. 
+This implies that if one receives a prison sentence, one is  $26 \frac{2/3}\%$ more likely to be arrested in the subsequent 3 years. This effect holds for all compliers, e.g. those who underwent the treatment. In this case, if the prison sentence is strongly enforced (e.g. nobody is able to escape), then presumably the effect holds for the whole population, since all are complying. 
 
 The definition of always takers is more formally: 
 \begin{align*}
@@ -189,7 +196,6 @@ summary(model_ols_extensive_iv)
 robust_se_simple_iv    <-  calc_robust_se(model_ols_simple_iv)
 robust_se_extensive_iv <-  calc_robust_se(model_ols_extensive_iv)
 
-
 # create stargazer output
 stargazer(model_ols_simple_iv, model_ols_extensive_iv, se = list(robust_se_simple_iv, robust_se_extensive_iv))
 
@@ -198,6 +204,9 @@ stargazer(model_ols_simple_iv, model_ols_extensive_iv, se = list(robust_se_simpl
 ```
 
 ```{R}
+
+# run partial regression
+## not affraid of irrelevant instrument, since 67% overlap...
 Partial_ols_FluShot <- lm(Treatment ~ TreatGroup, data=dfFlu)
 summary(Partial_ols_FluShot)
 
