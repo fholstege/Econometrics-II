@@ -109,9 +109,9 @@ We are going to look at the following outcomes: a) percentage of students who co
   \hline
  & Group & perc\_passed\_year1 & avg\_myeduc & avg\_fyeduc & avg\_p0 & math & perc\_job & avg\_effort \\ 
   \hline
-1 & Control & 0.195 & 12.293 & 13.378 & 0.553 & 5.476 & 0.695 & 19.549 \\ 
-  2 & High-reward & 0.241 & 12.590 & 13.422 & 0.573 & 5.388 & 0.747 & 18.303 \\ 
-  3 & Low-reward & 0.202 & 12.119 & 13.524 & 0.530 & 5.386 & 0.810 & 18.477 \\ 
+1 & Control & 19.5\% & 12.293 & 13.378 & 0.553 & 5.476 & 69.5\% & 19.549 \\ 
+  2 & High-reward & 24.1\% & 12.590 & 13.422 & 0.573 & 5.388 & 74.7\% & 18.303 \\ 
+  3 & Low-reward & 20.2\% & 12.119 & 13.524 & 0.530 & 5.386 & 81.0\% & 18.477 \\ 
    \hline
 \end{tabular}
 \end{table}
@@ -293,6 +293,8 @@ Adjusted R$^{2}$ & $-$0.007 & 0.235 & $-$0.008 & 0.142 \\
 \end{tabular} 
 \end{table}
 
+\newpage
+
 ## V)
 
 ```{r include=FALSE, eval=FALSE, echo=FALSE, results='hide'}
@@ -358,7 +360,9 @@ where $\alpha$ - significance level; $q$ - power; $p$ - a share of treated stude
   \item For $\sigma^2$: the residuals should follow the distribution of a bernouli value (since the only possible values are 1 and 0). The variance of a bernouli variable is $P$(1-$P$), with $P$ as the probability of the variable taking the value of 1. We estimate $P$ as the percentage of students in the population (both control and treated) that passed the first year. 
 \end{itemize}
 
-Our sample of students consists of three groups; control, low-reward, and high-reward. We do not want to put all of these together in the same MDE calculation. The reason for this is that if we treat the low-reward and high-reward as one treatment group, the resulting MDE would tell us if low and high-reward received the same treatment - but this is not the case. As such, we conduct the MDE calculation separately for two models; one with the control group and the low-reward, and one with the control group and the high-reward. In both cases, we used the model as specified in question II) with the control variables. 
+Our sample of students consists of three groups; control, low-reward, and high-reward. We do not want to put all of these together in the same MDE calculation. The resulting MDE would be the MDE as if both groups received the same treatment - but that is not the case. 
+
+One could argue that they are similar for the purpose of calculating the MDE, using the monotinicity assumption that those who would be motivated by the low reward should also be motivated by the high reward. But we do not want to make this assumption.As such, we conduct the MDE calculation separately for two models; one with the control group and the low-reward, and one with the control group and the high-reward. In both cases, we used the model as specified in question II) with the control variables. 
 
 \begin{table}[ht]
 \centering
