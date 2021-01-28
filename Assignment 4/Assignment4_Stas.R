@@ -2,7 +2,21 @@ library(rio)
 library(tidyverse)
 library(AER)
 #============== Use rio package to import data
-#-------------------
+#-------------------------
+# Problem 1
+# dataframe with the percentages per case/arrest and judge
+dfJudge <- data.frame( cases = c(0.7, 0.3, 0.4, 0.6), arrests = c(0.4, 0.6, 0.2, 0.5) )
+rownames(dfJudge) <- c("Jones-Prison", "Jones-Other", "Smith-Prison", "Smith-Other")
+
+PY_1_Z_1 = dfJudge[1,1]*dfJudge[1,2] + dfJudge[2,1]*dfJudge[2,2]
+PY_1_Z_0 = dfJudge[3,1]*dfJudge[3,2] + dfJudge[4,1]*dfJudge[4,2]
+PD_1_Z_1 = dfJudge[1,1]
+PD_1_Z_0 = dfJudge[3,1]
+
+wald_est <- (PY_1_Z_1 - PY_1_Z_0) / (PD_1_Z_1 - PD_1_Z_0)
+wald_est
+
+#---------------------------
 # Problem 2
 # (i): determine size
 round((((1.96 + 0.524)/0.1)^2) * (0.5*0.5)/(0.5*(1 - 0.5)), 0)
@@ -68,7 +82,7 @@ stargazer(iv_all, iv_all_all,
           type="text", report="vc*stp",
           keep.stat=c("n","adj.rsq"),
           se = list(sqrt(diag(vcovHC(iv_all, type = "HC1"))), sqrt(diag(vcovHC(iv_all_all, type = "HC1")))),
-          title = "The effect of flu vaccine on the probability to get flu with IV")
+          title = "The effect of flu vaccine on the probability to get flu with IV (ATE)")
 #============ Same question with robust s.e.
 
 #-------------------------
@@ -84,7 +98,5 @@ stargazer(lm_shot, lm_shot_all,
 
 # (vii)
 # Because non-compliers have not optted out by their will rather they couldn't receive it due to other reasons (not individual characteristics)
-
-
 
 
