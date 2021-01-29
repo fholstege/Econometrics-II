@@ -36,6 +36,8 @@ dfFlu_control <- dfFlu[dfFlu$TreatGroup == 0,]
 # (i) Calculate variance for the control group AND size
 p <- sum(dfFlu_control$Flu)/nrow(dfFlu_control)
 sigma2 <- p*(1-p)
+print(p)
+print(sigma2)
 round((((1.96 + 0.84)/0.05)^2) * (sigma2)/(0.8*(1 - 0.8)), 0)
 #======== We need to use CONTROL and not TREATMENT group
 

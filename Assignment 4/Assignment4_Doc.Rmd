@@ -25,14 +25,17 @@ pacman::p_load(plm,
 ```{r, echo=FALSE}
 
 # dataframe with the percentages per case/arrest and judge
-dfJudge <- data.frame( cases = c(0.7, 0.3, 0.4, 0.6), arrests = c(0.4, 0.6, 0.2, 0.5) )
+dfJudge <- data.frame( perc_sentence = c(0.7, 0.3, 0.4, 0.6), perc_arrest = c(0.4, 0.6, 0.2, 0.5) )
 rownames(dfJudge) <- c("Jones-Prison", "Jones-Other", "Smith-Prison", "Smith-Other")
+
+dfJudge$perc_arrest_cond = dfJudge$perc_sentence * dfJudge$perc_arrest
+
+
 
 PY_1_Z_1 = sum(dfJudge$perc_arrest_cond[c(1,2)])
 PY_1_Z_0 = sum(dfJudge$perc_arrest_cond[c(3,4)])
 PD_1_Z_1 = dfJudge$perc_sentence[1]
 PD_1_Z_0 = dfJudge$perc_sentence[3]
-
 
 
 wald_est <- (PY_1_Z_1 - PY_1_Z_0)/ (PD_1_Z_1 - PD_1_Z_0)
@@ -47,7 +50,7 @@ wald_est
 
 We use the allocation to the two judges as a instrument. This instrument is relevant, since one judge (Jones) will sentence more than the other (Smith). But it is also exogenous, since the defendants are randomly allocated to a judge. 
 
-In order to assess the effect of a prison sentence of future arrests, we use the Wald-estimator, defined as follows:
+I) In order to assess the effect of a prison sentence of future arrests, we use the Wald-estimator, defined as follows:
 
 \begin{align*}
 \beta_{wald} = \frac{P(Y = 1 | Z = 1) - P(Y = 1 | Z = 0)}{P(D = 1 | Z = 1) = P(D = 1 | Z = 0 )}
@@ -58,55 +61,68 @@ Where $P(Y = 1)$ is the probability of an arrest in the subsequent 3 years, $Z$ 
 To estimate the probabilities, we simply use the \% of each event occuring in our sample. The Wald estimator then becomes: 
 
 \begin{align*}
-\beta_{wald} =  \frac{0.46 - 0.38}{0.7 - 0.4} = \frac{0.08}{0.3} = 26 \frac{2/3}\%
+\beta_{wald} =  \frac{0.46 - 0.38}{0.7 - 0.4} = \frac{0.08}{0.3} = 0.26 \frac{2}{3}
 \end{align*}
 
-This implies that if one receives a prison sentence, one is  $26 \frac{2/3}\%$ more likely to be arrested in the subsequent 3 years. This effect holds for all compliers, e.g. those who underwent the treatment. In this case, if the prison sentence is strongly enforced (e.g. nobody is able to escape), then presumably the effect holds for the whole population, since all are complying. 
+II) The result implies that if one receives a prison sentence, one is  $26 \frac{2}{3}\%$ more likely to be arrested in the subsequent 3 years. This effect holds for all compliers. 
 
-The definition of always takers is more formally: 
+Since we are working with an instrument, the definition of compliers and always takers changes. Instead of related to the prison treatment, it is not related to the instrument that we use to estimate the actual effect. That is because non-compliance is now only relevant insofar as it effects the observed outcome from this instrument. The definition here is therefore:
+
 \begin{align*}
-  D(1) = D(0) = 1
+  Z(1) = 1, Z(0) = 0
 \end{align*}
 
-Which in this case means always takers are those who would undergo a prison sentence (D(1)), even if the judge did not convict them (D(0)). 
+In this case, those are people who under Jones went to prison, but would not under smith, and those that under Smith would go to prison, but not under Jones. $(0.7 \cdot 0.6) + (0.4 \cdot 0.3) = 0.54$.
 
+III) The definition of always takers is in this case
+
+\begin{align*}
+  Z(1) = Z(0) = 1
+\end{align*}
+
+More specifically, an always taker is someone who is sent to prison by both judges. This fraction equals $0.7 \cdot 0.4 = 0.28$.
 
 
 ```{r}
 
 
-# get size, given mde 
-get_size_givenMDE <- function(MDE, fAlpha, fPower, p, Sigma2){
-  
-  # get t values
-  t_alpha <- qnorm(1-fAlpha/2, 0,Sigma2)
-  t_q <-qnorm(1-fPower, 0,Sigma2)
+get_size_givenMDE <- function(MDE, t_Alpha, t_Power, p, Sigma2){
   
   # get the MDE
-  size <- (((t_alpha - t_q)/MDE)^2) * sigma2/(p*(1-p))
+  size <- (((t_Alpha - t_Power)/MDE)^2) * sigma2/(p*(1-p))
   size <- round(size, 0)
   
   return(size)
 }
   
-# get parameters for power calculation
+
 MDE = 0.1
-fAlpha = 0.05
-fPower = 0.7
+t_Alpha = 1.96
+t_Power = -0.524
 p = 0.5
 sigma2 <- p* (1- p)
 
-# determine size 
-size = get_size_givenMDE(MDE, fAlpha, fPower, p, sigma2)
+size <- get_size_givenMDE(0.1, t_Alpha, t_Power, p, sigma2)
+size
 
-# define percentage that does not comply
 perc_nonComply <- 0.2
 
-# new size, given rate of non-compliance
-new_size = (1/(1-perc_nonComply))*size
+new_size = (1/(1-perc_nonComply)^2)*size
+new_size
+
 
 
 ```
+
+## Problem 2
+
+
+\begin{align*}
+n = (\frac{(1.96 + 0.524)}{MDE})^2 * \frac{\sigma^2}{p \cdot(1-p)}
+\end{align*}
+
+I) 617
+II) 965
 
 
 ```{r}
@@ -117,12 +133,15 @@ dfFlu_treatment <- dfFlu[dfFlu$TreatGroup == 1,]
 dfFlu_control <- dfFlu[dfFlu$TreatGroup == 0,]
 
 # percentage that got the flu in the treatment group (got flu shot)
-p_flu <- sum(dfFlu_treatment$Flu)/nrow(dfFlu_treatment)
-# estimate the sigma2
-sigma2_flu <- p*(1-p)
+p_flu <- 0.8
+sigma2_flu <- p_flu*(1-p_flu)
+
+t_Alpha_flu = 1.96
+t_Power_flu = -0.84
 
 # size of the experiment, given p and sigma2
-size_flu <- get_size_givenMDE(0.05, fAlpha, fPower, p_flu, sigma2_flu)
+size_flu <- get_size_givenMDE(0.05, t_Alpha_flu, t_Power_flu, p_flu, sigma2_flu)
+size_flu
 
 # get df with group that actually got the treatment
 dfFlu_actualTreatment <- dfFlu_treatment[dfFlu_treatment$Treatment == 1,]
@@ -130,6 +149,7 @@ perc_comply_flu <- nrow(dfFlu_actualTreatment)/nrow(dfFlu_treatment)
 
 # get new size given the rate that did not get treatment
 new_size_flu = (1/(perc_comply_flu)^2)*size_flu
+new_size_flu
 
 ```
 
@@ -146,8 +166,11 @@ dfSummary <- dfFlu %>%
             mean_edu_mother = mean(EducationMother),
             perc_married = sum(Married)/n(),
             perc_nationality = sum(Nationality)/n(),
-            mean_HHincome = mean(Hhincome)
+            mean_HHincome = mean(Hhincome),
+            perc_group = n()/nrow(dfFlu)
             )
+
+xtable(dfSummary)
     
 
 ```
