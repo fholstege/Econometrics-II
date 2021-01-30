@@ -18,7 +18,8 @@ pacman::p_load(plm,
                tidyverse,
                xtable,
                stargazer,
-               AER)
+               AER,
+               readstata13)
 
 ```
 
@@ -116,13 +117,20 @@ new_size
 
 ## Problem 2
 
+I) We use the following formula:
+\begin{align*}
+n = (\frac{(1.96 + 0.524)}{MDE})^2 * \frac{\sigma^2}{p \cdot(1-p)} = 617
+\end{align*}
+Where n is the required sample size, $\sigma^2$ is the variance, and $p$ is the proportion of the control group in the experiment. 
+
+
+II) The sample size has to increase in order to make up for the non-compliance. We calculate this as follows:
 
 \begin{align*}
-n = (\frac{(1.96 + 0.524)}{MDE})^2 * \frac{\sigma^2}{p \cdot(1-p)}
+\text{new n} = n \cdot \frac{1}{0.8^2} = 965
 \end{align*}
 
-I) 617
-II) 965
+
 
 
 ```{r}
@@ -234,3 +242,41 @@ Partial_ols_FluShot <- lm(Treatment ~ TreatGroup, data=dfFlu)
 summary(Partial_ols_FluShot)
 
 ```
+
+VII)
+ 
+We assume two things; first, there are no always takers, e.g. people who took the vaccine if they were not assigned to the treatment group. Second, we don't have defiers in our sample when estimating the LATE, e.g. the people who were assigned the treatment but did not comply. We then are left with compliers and never takers (e.g. those who would have not taken the vaccine irrespective of the assigned group).\\
+\\
+We define $p_{1c}$ as the percentage of compliers in the treatment group, and $p_{0c}$ the percentage  of compliers in the control group.
+
+We define $Y_{i, c}$ as the dependent variable for compliers, and $Y_{i, nt}$ for the never takers. \\
+
+\begin{align*}
+    \E[Y | Z = 1] = p_{1,c} \cdot Y_{1,c} + (1-p_{1,c}) \cdot Y_{1, nt}\\
+    \E[Y | Z = 0] = p_{0,c} \cdot Y_{0,c} + (1-p_{0,c}) \cdot Y_{0, nt}
+\end{align*}
+
+In order to find the LATE, we define the Wald estimator is defined as:
+
+\begin{align*}
+\delta_{Wald} &= \frac{ \E[Y | Z = 1] -  \E[Y | Z = 0]}{\E[D| Z=1]−\E[D| Z=0} \\
+&= \frac{p_{1c} \cdot Y_{1,c} + (1-p_{1,c}) \cdot Y_{1, nt} -  p_{0,c} \cdot Y_{0,c} + (1-p_{0,c}) \cdot Y_{0, nt}}{\E[D| Z=1] − \E[D| Z=0}
+\end{align*}
+
+
+ We assume $p_{1c} = p_{0c} = p_c$, e.g. the proportion of people who comply in the treatment group is similar to the control group - this is strong assumption in this case, since it seems more plausible that people would divert from the receiving vaccination (due to beliefs about the possible side effects) than the control. We can rewrite the wald estimator as: 
+ 
+ 
+ \begin{align*}
+ \delta_{Wald} = \frac{p\cdot ( Y_{1,c} - Y_{0,c}) + (1-p) \cdot (Y_{1, nt} - Y_{0, nt})}{\E[D| Z=1] − \E[D| Z=0}
+ \end{align*}
+ 
+$\E[D| Z=1] = p_{1,c} = p $, since its just the percentage of people that undertake take the treatment compliers. $\E[D| Z=0] =0 $, since there are no people who undertake the treatment who were not assigned (e.g. no always takers). We can thus rewrite the wald estimator as: 
+
+
+\begin{align*}
+    \delta_{Wald} &= \frac{p\cdot ( Y_{1,c} - Y_{0,c}) + (1-p) \cdot (Y_{1, nt} - Y_{0, nt})}{p}\\
+    &= Y_{1,c} - Y_{0,c} = ATET
+\end{align*}
+
+where the $ATET$ is the of the average treatment effect on the treated, because we assume once treated everyone complies. 
