@@ -49,7 +49,6 @@ wald_est
 
 # Problem 1
 
-
 We use the allocation to the two judges as an instrument. This instrument is relevant, since one judge (Jones) will sentence more than the other (Smith). But it is also exogenous, since the defendants are randomly allocated to a judge. 
 
 ## I) 
@@ -76,6 +75,25 @@ Since we are working with an instrument, the definition of compliers and always 
 
 \begin{align*}
   Z(1) = 1, Z(0) = 0
+\end{align*}
+
+In order to find the proprtion of alwayes takers, we first assume that there are no defiers. Second, we assume that people were equally assigned to judges and the randomization was successful. Then we know that:
+
+\begin{itemize}
+\item 70\% are always takers (AT) and compliers (C), i.e. they were assigned to Jones and sent to prison;
+\item 30\% are never takers (NT), i.e. they were assigned to Jones but weren't sent to prison;
+\item 40\% are always takers (AT), i.e. they were assigned to Smith but were sent to prison;
+\item 60\% are never takers (NT) and compliers (C), i.e. they were assigned to Smith and sent to prison.
+\end{itemize}
+
+It follows that the share of AT is 40\% in the population. To check it, we can calculate the share of AT in the population using the fact that the shares should sum up to 1:
+
+\begin{align*}
+1 &= AT + NT + C \\
+C &= 1 - AT - NT \\
+C &= 1 - 0.4 - 0.3 = 0.3 \text{ or} \\
+AT &= 1 - NT - C \\
+AT &= 1 - 0.3 - 0.3 = 0.4
 \end{align*}
 
 In this case, those are people who under Jones went to prison, but would not under Smith, and those that under Smith would go to prison, but not under Jones. $(0.7 \cdot 0.6) + (0.4 \cdot 0.3) = 0.54$.
@@ -424,11 +442,11 @@ F Statistic & 5,016$^{***}$ (df = 1; 12581) \\
 
 ## VII)
  
-We assume two things; first, there are no always takers, e.g. people who took the vaccine if they were not assigned to the treatment group. Second, we don't have defiers in our sample when estimating the LATE, e.g. the people who were assigned the treatment but did not comply. We then are left with compliers and never takers (e.g. those who would have not taken the vaccine irrespective of the assigned group).\\
-\\
+We assume two things; first, there are no always takers, e.g. people who took the vaccine if they were not assigned to the treatment group. Second, we don't have defiers in our sample when estimating the LATE. We then are left with compliers and never takers (e.g. those who would have not taken the vaccine irrespective of the assigned group).
+
 We define $p_{1c}$ as the percentage of compliers in the treatment group, and $p_{0c}$ the percentage  of compliers in the control group.
 
-We define $Y_{i, c}$ as the dependent variable for compliers, and $Y_{i, nt}$ for the never takers. \\
+We define $Y_{i, c}$ as the dependent variable for compliers, and $Y_{i, nt}$ for the never takers.
 
 \begin{align*}
     E[Y | Z = 1] = p_{1,c} \cdot Y_{1,c} + (1-p_{1,c}) \cdot Y_{1, nt} \\
@@ -443,7 +461,7 @@ In order to find the LATE, we define the Wald estimator is defined as:
 \end{align*}
 
 
- We assume $p_{1c} = p_{0c} = p_c$, e.g. the proportion of people who comply in the treatment group is similar to the control group - this is strong assumption in this case, since it seems more plausible that people would divert from the receiving vaccination (due to beliefs about the possible side effects) than the control. We can rewrite the wald estimator as: 
+We assume $p_{1c} = p_{0c} = p_c$, e.g. the proportion of people who comply in the treatment group is similar to the control group - this is strong assumption in this case, since it seems more plausible that people would divert from the receiving vaccination (due to beliefs about the possible side effects) than the control. We can rewrite the wald estimator as: 
 
 \begin{align*}
     \delta_{Wald} = \frac{p\cdot ( Y_{1,c} - Y_{0,c}) + (1-p) \cdot (Y_{1, nt} - Y_{0, nt})}{E[D | Z = 1] - E[D | Z = 0]}
