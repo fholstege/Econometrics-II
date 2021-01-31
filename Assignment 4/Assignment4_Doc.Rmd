@@ -18,7 +18,8 @@ pacman::p_load(plm,
                tidyverse,
                xtable,
                stargazer,
-               AER)
+               AER,
+               rio)
 
 ```
 
@@ -128,7 +129,7 @@ II) 965
 ```{r}
 
 # get data on flu shots, divide in treatment and control
-dfFlu <- read.dta13("Data/FluData.dta")
+dfFlu <- import("FluData.dta")
 dfFlu_treatment <- dfFlu[dfFlu$TreatGroup == 1,]
 dfFlu_control <- dfFlu[dfFlu$TreatGroup == 0,]
 
