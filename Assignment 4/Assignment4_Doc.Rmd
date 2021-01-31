@@ -19,15 +19,12 @@ pacman::p_load(plm,
                xtable,
                stargazer,
                AER,
-<<<<<<< HEAD
-               rio)
-=======
+               rio,
                readstata13)
->>>>>>> 5d86b146a047c03552c88a06609e5cee7bc5e75a
 
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 
 # dataframe with the percentages per case/arrest and judge
 dfJudge <- data.frame( perc_sentence = c(0.7, 0.3, 0.4, 0.6), perc_arrest = c(0.4, 0.6, 0.2, 0.5) )
@@ -50,26 +47,30 @@ wald_est
 
 ```
 
-## Problem 1
+# Problem 1
 
 
-We use the allocation to the two judges as a instrument. This instrument is relevant, since one judge (Jones) will sentence more than the other (Smith). But it is also exogenous, since the defendants are randomly allocated to a judge. 
+We use the allocation to the two judges as an instrument. This instrument is relevant, since one judge (Jones) will sentence more than the other (Smith). But it is also exogenous, since the defendants are randomly allocated to a judge. 
 
-I) In order to assess the effect of a prison sentence of future arrests, we use the Wald-estimator, defined as follows:
+## I) 
+
+In order to assess the effect of a prison sentence on future arrests, we use the Wald-estimator, defined as follows:
 
 \begin{align*}
-\beta_{wald} = \frac{P(Y = 1 | Z = 1) - P(Y = 1 | Z = 0)}{P(D = 1 | Z = 1) = P(D = 1 | Z = 0 )}
+\beta_{wald} = \frac{P(Y = 1 | Z = 1) - P(Y = 1 | Z = 0)}{P(D = 1 | Z = 1) - P(D = 1 | Z = 0 )}
 \end{align*}
 
-Where $P(Y = 1)$ is the probability of an arrest in the subsequent 3 years, $Z$ is our instrumental variable, with $Z = 1$ being judged by Jones, and $Z = 0$ being judged by Smith. $P(D = 1)$ is the probability of an prison sentence. 
+Where $P(Y = 1)$ is the probability of an arrest in the subsequent 3 years, $Z$ is our instrumental variable, with $Z = 1$ being judged by Jones, and $Z = 0$ being judged by Smith. $P(D = 1)$ is the probability of a prison sentence. 
 
 To estimate the probabilities, we simply use the \% of each event occuring in our sample. The Wald estimator then becomes: 
 
 \begin{align*}
-\beta_{wald} =  \frac{0.46 - 0.38}{0.7 - 0.4} = \frac{0.08}{0.3} = 0.26 \frac{2}{3}
+\beta_{wald} =  \frac{0.46 - 0.38}{0.7 - 0.4} = \frac{0.08}{0.3} = 26 \frac{2}{3}
 \end{align*}
 
-II) The result implies that if one receives a prison sentence, one is  $26 \frac{2}{3}\%$ more likely to be arrested in the subsequent 3 years. This effect holds for all compliers. 
+## II) 
+
+The result implies that if one receives a prison sentence, one is  $26 \frac{2}{3}\%$ more likely to be arrested in the subsequent 3 years. This effect holds for all compliers. 
 
 Since we are working with an instrument, the definition of compliers and always takers changes. Instead of related to the prison treatment, it is not related to the instrument that we use to estimate the actual effect. That is because non-compliance is now only relevant insofar as it effects the observed outcome from this instrument. The definition here is therefore:
 
@@ -77,9 +78,11 @@ Since we are working with an instrument, the definition of compliers and always 
   Z(1) = 1, Z(0) = 0
 \end{align*}
 
-In this case, those are people who under Jones went to prison, but would not under smith, and those that under Smith would go to prison, but not under Jones. $(0.7 \cdot 0.6) + (0.4 \cdot 0.3) = 0.54$.
+In this case, those are people who under Jones went to prison, but would not under Smith, and those that under Smith would go to prison, but not under Jones. $(0.7 \cdot 0.6) + (0.4 \cdot 0.3) = 0.54$.
 
-III) The definition of always takers is in this case
+## III) 
+
+The definition of always takers is in this case
 
 \begin{align*}
   Z(1) = Z(0) = 1
@@ -87,8 +90,7 @@ III) The definition of always takers is in this case
 
 More specifically, an always taker is someone who is sent to prison by both judges. This fraction equals $0.7 \cdot 0.4 = 0.28$.
 
-
-```{r}
+```{r, include=FALSE}
 
 
 get_size_givenMDE <- function(MDE, t_Alpha, t_Power, p, Sigma2){
@@ -119,25 +121,28 @@ new_size
 
 ```
 
-## Problem 2
+# Problem 2
 
-I) We use the following formula:
+## I) 
+
+We use the following formula:
 \begin{align*}
 n = (\frac{(1.96 + 0.524)}{MDE})^2 * \frac{\sigma^2}{p \cdot(1-p)} = 617
 \end{align*}
 Where n is the required sample size, $\sigma^2$ is the variance, and $p$ is the proportion of the control group in the experiment. 
 
 
-II) The sample size has to increase in order to make up for the non-compliance. We calculate this as follows:
+## II) 
+
+The sample size has to increase in order to make up for the non-compliance. We calculate this as follows:
 
 \begin{align*}
-\text{new n} = n \cdot \frac{1}{0.8^2} = 965
+\text{new n} = n \cdot \frac{1}{0.8^2} = 964
 \end{align*}
 
+\pagebreak
 
-
-
-```{r}
+```{r, include=FALSE}
 
 # get data on flu shots, divide in treatment and control
 dfFlu <- import("FluData.dta")
@@ -165,30 +170,87 @@ new_size_flu
 
 ```
 
+# Problem 3
 
-```{r}
+## I)
 
-type_group <- ifelse(dfFlu$TreatGroup ==1 & dfFlu$Treatment == 0, "Untreated treatment",ifelse(dfFlu$TreatGroup ==1 & dfFlu$Treatment == 1, "Treated treatment","control"))
+To compute the variance of the flu incidence in the control group, we use the variance of a Bernoulli distribution:
+
+\begin{align*}
+  Var(X) = p(1-p) = 0.62(1 - 0.62) = 0.24
+\end{align*}
+
+To estimate the number of children that have to participate in the experiment in order to have an effect of 5\%, one has to use the following formula for 80\% power:
+
+\begin{align*}
+  n = (\frac{(1.96 + 0.84)}{0.05})^2 * \frac{0.24}{0.8 \cdot(1-0.8)} = 4615
+\end{align*}
+
+## II
+
+As there was a shortage of flu shots, we have a problem of non-compliance. To correctly estimate the size of participants we have to calculate the fraction of the children in the treatment who received a flu shot (66.8\%) and plug it in the following formula:
+
+\begin{align*}
+\text{new n} = n \cdot \frac{1}{0.668^2} = 10344
+\end{align*}
+
+If there is a problem of non-compliance, one has to invite more participant in the experiment to find a desirable effect. 
+
+```{r, include=FALSE}
+
+type_group <- ifelse(dfFlu$TreatGroup ==1 & dfFlu$Treatment == 0, "Untreated treatment",ifelse(dfFlu$TreatGroup ==1 & dfFlu$Treatment == 1, "Treated treatment","Control"))
 dfFlu$type_group <- type_group
 
 dfSummary <- dfFlu %>%
   group_by(type_group) %>% 
-  summarise(perc_boy = sum(GenderChild)/n(),
-            mean_age_mother = mean(AgeMother),
-            mean_edu_mother = mean(EducationMother),
-            perc_married = sum(Married)/n(),
-            perc_nationality = sum(Nationality)/n(),
-            mean_HHincome = mean(Hhincome),
-            perc_group = n()/nrow(dfFlu)
+  summarise(boy = sum(GenderChild)/n(),
+            age_mother = mean(AgeMother),
+            edu_mother = mean(EducationMother),
+            married = sum(Married)/n(),
+            nationality = sum(Nationality)/n(),
+            income = mean(Hhincome),
+            share = n()/nrow(dfFlu)
+            )
+dfSummary_two <- dfFlu %>%
+  group_by(TreatGroup) %>% 
+  summarise(boy = sum(GenderChild)/n(),
+            age_mother = mean(AgeMother),
+            edu_mother = mean(EducationMother),
+            married = sum(Married)/n(),
+            nationality = sum(Nationality)/n(),
+            income = mean(Hhincome),
+            share = n()/nrow(dfFlu)
             )
 
 xtable(dfSummary)
-    
+xtable(dfSummary_two)
+
+sapply(dfFlu[,1:6], function(i) t.test(i ~ dfFlu$TreatGroup)$p.value)
+sapply(dfFlu[dfFlu$type_group != "Control",1:6], function(i) t.test(i ~ dfFlu[dfFlu$type_group != "Control",]$type_group)$p.value)
 
 ```
 
+## III)
 
-```{r}
+Table \ref{summary} shows the summary statistics for variables that were measured prior to the experiment. There are no statistically significant differences between control and initially assigned treatment group suggesting the randomization was successful. However, there are statistically significant differences between untreated and treated treatment groups for all variables except for a gender of a child. These results suggest that there was a non random distribution of flu shots within the treament group, i.e. children who lived in rural areas where it was harder to deliver flu shots had less probability to receive one.
+
+\begin{table}[ht]
+\caption{Mean values for observed characteristics by groups} 
+  \label{summary} 
+\centering
+\begin{tabular}{rlrrrrrrr}
+  \hline
+ & type\_group & boy & age\_mother & edu\_mother & married & nationality & income & share \\ 
+  \hline
+  1 & Control & 0.51 & 26.09 & 12.34 & 0.96 & 0.28 & 2269.88 & 0.20 \\ 
+  2 & Treatment group & 0.50 & 26.03 & 12.29 & 0.96 & 0.27 & 2286.49 & 0.80 \\
+  2.1 & Treated treatment & 0.50 & 26.59 & 12.52 & 0.98 & 0.24 & 2373.87 & 0.54 \\ 
+  2.2 & Untreated treatment & 0.50 & 24.88 & 11.83 & 0.94 & 0.34 & 2110.71 & 0.27 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+```{r, include=FALSE}
 
 # define the two models
 model_ols_simple <- lm(Flu ~ Treatment, data=dfFlu_treatment)
@@ -211,13 +273,59 @@ robust_se_simple    <- calc_robust_se(model_ols_simple)
 robust_se_extensive <- calc_robust_se(model_ols_extensive)
   
 # create stargazer output
-stargazer(model_ols_simple, model_ols_extensive, se = list(robust_se_simple, robust_se_extensive))
+stargazer(model_ols_simple, model_ols_extensive, se = list(robust_se_simple, robust_se_extensive),
+          keep.stat=c("n","adj.rsq"),
+          title = "The effect of flu vaccine on the probability to get flu in the treatment group")
 
 ```
 
-```{R}
+## IV)
 
+First we estimate the model with only a dummy variable "Flu Shot" and then subsequently include other variables so our extended model is the following:
 
+\begin{align*}
+  Flu_i = \alpha + \delta FluShot_i + GenderChild_i + AgeMother_i + EducationMother_i + Married_i + \\ Nationality_i + Income_i + U_i
+\end{align*}
+
+Note that we have to use robust stadard errors as we have a binary independent varaible. Table \ref{ols} shows the results of the OLS regression. The variable of interest is Treatment and it shows that getting a flu shot decreases the chances to get flu by 27.4\% in a base model and it is statistically significant at the 1\% level. Including control variables changes the magnitude but not the significance level of the Treatment variable, i.e. an effect of getting a flu shot is 16.3\%. In line with the results from the descriptive statistics table we conlude that within the treatment group the flu shots were not randomly delivered to children. Hence, we conlude that instrumental variable is preferred to estimate a causal effect of getting a flu shot on the probability to get flu.
+
+\begin{table}[!htbp] \centering 
+  \caption{The effect of flu vaccine on the probability to get flu in the treatment group} 
+  \label{ols} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{Flu} \\ 
+\\[-1.8ex] & (1) & (2)\\ 
+\hline \\[-1.8ex] 
+ Treatment & $-$0.274$^{***}$ & $-$0.163$^{***}$ \\ 
+  & (0.010) & (0.010) \\ 
+ GenderChild &  & 0.016$^{*}$ \\ 
+  &  & (0.009) \\ 
+ AgeMother &  & $-$0.048$^{***}$ \\ 
+  &  & (0.002) \\ 
+ EducationMother &  & $-$0.030$^{***}$ \\ 
+  &  & (0.003) \\ 
+ Married &  & $-$0.025 \\ 
+  &  & (0.022) \\ 
+ Nationality &  & 0.092$^{***}$ \\ 
+  &  & (0.010) \\ 
+ Income &  & 0.00001 \\ 
+  &  & (0.00000) \\ 
+ Constant & 0.675$^{***}$ & 2.185$^{***}$ \\ 
+  & (0.008) & (0.038) \\ 
+\hline \\[-1.8ex] 
+Observations & 10,089 & 10,089 \\ 
+Adjusted R$^{2}$ & 0.067 & 0.190 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table}
+
+```{r, include=FALSE}
 # run both 2sls regressions - simple and extensive model
 model_ols_simple_iv <- ivreg(Flu ~ Treatment | TreatGroup, data=dfFlu)
 model_ols_extensive_iv <- ivreg(Flu ~ Treatment + GenderChild + AgeMother + EducationMother + Married + Nationality + Hhincome
@@ -232,22 +340,89 @@ robust_se_simple_iv    <-  calc_robust_se(model_ols_simple_iv)
 robust_se_extensive_iv <-  calc_robust_se(model_ols_extensive_iv)
 
 # create stargazer output
-stargazer(model_ols_simple_iv, model_ols_extensive_iv, se = list(robust_se_simple_iv, robust_se_extensive_iv))
-
-
-
+stargazer(model_ols_simple_iv, model_ols_extensive_iv, se = list(robust_se_simple_iv, robust_se_extensive_iv),
+          keep.stat=c("n","adj.rsq"),
+          title = "The effect of flu vaccine on the probability to get flu using an instrumental variable")
 ```
 
-```{R}
+## V)
+
+We have found that there was a non random distribution of flu shots within the treatment group, thus, we need to use IV estimator. As an instrumental variable for getting a vaccine we use whether or not a child was assigned to the treatment group. The results of IV estimators are in the Table \ref{iv}. The effect of flu vaccine on the probability to get flu is 19.8\% and 19.3\% with and without control variables and the effects are statistically significant at the 1\% level. Including control variables do not change the size of the effect suggesting that using IV estimator is preferred in this context.
+
+\begin{table}[!htbp] \centering 
+  \caption{The effect of flu vaccine on the probability to get flu using an instrumental variable} 
+  \label{iv} 
+\begin{tabular}{@{\extracolsep{5pt}}lcc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-3} 
+\\[-1.8ex] & \multicolumn{2}{c}{Flu} \\ 
+\\[-1.8ex] & (1) & (2)\\ 
+\hline \\[-1.8ex] 
+ Treatment & $-$0.193$^{***}$ & $-$0.198$^{***}$ \\ 
+  & (0.016) & (0.015) \\ 
+ GenderChild &  & 0.013$^{*}$ \\ 
+  &  & (0.008) \\ 
+ AgeMother &  & $-$0.046$^{***}$ \\ 
+  &  & (0.002) \\ 
+ EducationMother &  & $-$0.027$^{***}$ \\ 
+  &  & (0.003) \\ 
+ Married &  & $-$0.028 \\ 
+  &  & (0.019) \\ 
+ Nationality &  & 0.090$^{***}$ \\ 
+  &  & (0.009) \\ 
+ Income &  & 0.00000 \\ 
+  &  & (0.00000) \\ 
+ Constant & 0.621$^{***}$ & 2.153$^{***}$ \\ 
+  & (0.010) & (0.034) \\ 
+\hline \\[-1.8ex] 
+Observations & 12,583 & 12,583 \\ 
+Adjusted R$^{2}$ & 0.059 & 0.184 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+```{r, include=FALSE}
 
 # run partial regression
 ## not affraid of irrelevant instrument, since 67% overlap...
 Partial_ols_FluShot <- lm(Treatment ~ TreatGroup, data=dfFlu)
 summary(Partial_ols_FluShot)
-
+stargazer(Partial_ols_FluShot,
+          keep.stat=c("n","adj.rsq", "f"),
+          title = "The first-stage regression of the IV estimator")
 ```
 
-VII)
+Table \ref{first} shows the results of the first-stage regression of being assignment to the treatment group on a dummy to get a flu shot. We can see there is a high correlation between these two variables and F-test is greater than 104.7 (Lee, 2020).
+
+\begin{table}[!htbp] \centering 
+  \caption{The first-stage regression of the IV estimator} 
+  \label{first} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & Treatment \\ 
+\hline \\[-1.8ex] 
+ TreatGroup & 0.668$^{***}$ \\ 
+  & (0.009) \\ 
+ Constant & 0.000 \\ 
+  & (0.008) \\ 
+\hline \\[-1.8ex] 
+Observations & 12,583 \\ 
+Adjusted R$^{2}$ & 0.285 \\ 
+F Statistic & 5,016$^{***}$ (df = 1; 12581) \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table}
+
+## VII)
  
 We assume two things; first, there are no always takers, e.g. people who took the vaccine if they were not assigned to the treatment group. Second, we don't have defiers in our sample when estimating the LATE, e.g. the people who were assigned the treatment but did not comply. We then are left with compliers and never takers (e.g. those who would have not taken the vaccine irrespective of the assigned group).\\
 \\
@@ -256,26 +431,25 @@ We define $p_{1c}$ as the percentage of compliers in the treatment group, and $p
 We define $Y_{i, c}$ as the dependent variable for compliers, and $Y_{i, nt}$ for the never takers. \\
 
 \begin{align*}
-    \E[Y | Z = 1] = p_{1,c} \cdot Y_{1,c} + (1-p_{1,c}) \cdot Y_{1, nt}\\
-    \E[Y | Z = 0] = p_{0,c} \cdot Y_{0,c} + (1-p_{0,c}) \cdot Y_{0, nt}
+    E[Y | Z = 1] = p_{1,c} \cdot Y_{1,c} + (1-p_{1,c}) \cdot Y_{1, nt} \\
+    E[Y | Z = 0] = p_{0,c} \cdot Y_{0,c} + (1-p_{0,c}) \cdot Y_{0, nt}
 \end{align*}
 
 In order to find the LATE, we define the Wald estimator is defined as:
 
 \begin{align*}
-\delta_{Wald} &= \frac{ \E[Y | Z = 1] -  \E[Y | Z = 0]}{\E[D| Z=1]−\E[D| Z=0} \\
-&= \frac{p_{1c} \cdot Y_{1,c} + (1-p_{1,c}) \cdot Y_{1, nt} -  p_{0,c} \cdot Y_{0,c} + (1-p_{0,c}) \cdot Y_{0, nt}}{\E[D| Z=1] − \E[D| Z=0}
+  \delta_{Wald} &= \frac{E[Y | Z = 1] - E[Y | Z = 0]}{E[D | Z = 1] - E[D | Z = 0]} \\
+  &= \frac{p_{1c} \cdot Y_{1,c} + (1-p_{1,c}) \cdot Y_{1, nt} -  p_{0,c} \cdot Y_{0,c} + (1-p_{0,c})\cdot Y_{0, nt}}{E[D | Z = 1] - E[D | Z = 0]}
 \end{align*}
 
 
  We assume $p_{1c} = p_{0c} = p_c$, e.g. the proportion of people who comply in the treatment group is similar to the control group - this is strong assumption in this case, since it seems more plausible that people would divert from the receiving vaccination (due to beliefs about the possible side effects) than the control. We can rewrite the wald estimator as: 
+
+\begin{align*}
+    \delta_{Wald} = \frac{p\cdot ( Y_{1,c} - Y_{0,c}) + (1-p) \cdot (Y_{1, nt} - Y_{0, nt})}{E[D | Z = 1] - E[D | Z = 0]}
+\end{align*}
  
- 
- \begin{align*}
- \delta_{Wald} = \frac{p\cdot ( Y_{1,c} - Y_{0,c}) + (1-p) \cdot (Y_{1, nt} - Y_{0, nt})}{\E[D| Z=1] − \E[D| Z=0}
- \end{align*}
- 
-$\E[D| Z=1] = p_{1,c} = p $, since its just the percentage of people that undertake take the treatment compliers. $\E[D| Z=0] =0 $, since there are no people who undertake the treatment who were not assigned (e.g. no always takers). We can thus rewrite the wald estimator as: 
+$E[D| Z=1] = p_{1,c} = p$, since its just the percentage of people that undertake take the treatment compliers. $E[D| Z=0] =0$, since there are no people who undertake the treatment who were not assigned (e.g. no always takers). We can thus rewrite the wald estimator as: 
 
 
 \begin{align*}
@@ -284,3 +458,8 @@ $\E[D| Z=1] = p_{1,c} = p $, since its just the percentage of people that undert
 \end{align*}
 
 where the $ATET$ is the of the average treatment effect on the treated, because we assume once treated everyone complies. 
+
+# Bibliography
+
+Lee, D. L., McCrary, J., Moreira, M. J., & Porter, J. (2020). Valid t-ratio Inference for IV. arXiv preprint arXiv:2010.05058.
+
