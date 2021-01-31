@@ -195,7 +195,7 @@ To estimate the number of children that have to participate in the experiment in
   n = (\frac{(1.96 + 0.84)}{0.05})^2 * \frac{0.24}{0.8 \cdot(1-0.8)} = 4615
 \end{align*}
 
-## II
+## II)
 
 As there was a shortage of flu shots, we have a problem of non-compliance. To correctly estimate the size of participants we have to calculate the fraction of the children in the treatment who received a flu shot (66.8\%) and plug it in the following formula:
 
@@ -405,7 +405,9 @@ stargazer(Partial_ols_FluShot,
           title = "The first-stage regression of the IV estimator")
 ```
 
-Table \ref{first} shows the results of the first-stage regression of being assignment to the treatment group on a dummy to get a flu shot. We can see there is a high correlation between these two variables and F-test is greater than 104.7 (Lee, 2020).
+## VI)
+
+Table \ref{first} shows the results of the first-stage regression of being assignment to the treatment group on a dummy to get a flu shot. We can see there is a high correlation between these two variables and F-test is greater than 104.7 (Lee, 2020) so there is no a weak instrument problem.
 
 \begin{table}[!htbp] \centering 
   \caption{The first-stage regression of the IV estimator} 
