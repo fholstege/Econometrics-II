@@ -71,6 +71,8 @@ To estimate the probabilities, we simply use the \% of each event occuring in ou
 
 The result implies that if one receives a prison sentence, one is  $26 \frac{2}{3}\%$ more likely to be arrested in the subsequent 3 years. This effect holds for all compliers. 
 
+## III)
+
 Since we are working with an instrument, the definition of compliers and always takers changes. Instead of related to the prison treatment, it is not related to the instrument that we use to estimate the actual effect. That is because non-compliance is now only relevant insofar as it effects the observed outcome from this instrument. The definition here is therefore:
 
 \begin{align*}
@@ -96,17 +98,6 @@ AT &= 1 - NT - C \\
 AT &= 1 - 0.3 - 0.3 = 0.4
 \end{align*}
 
-In this case, those are people who under Jones went to prison, but would not under Smith, and those that under Smith would go to prison, but not under Jones. $(0.7 \cdot 0.6) + (0.4 \cdot 0.3) = 0.54$.
-
-## III) 
-
-The definition of always takers is in this case
-
-\begin{align*}
-  Z(1) = Z(0) = 1
-\end{align*}
-
-More specifically, an always taker is someone who is sent to prison by both judges. This fraction equals $0.7 \cdot 0.4 = 0.28$.
 
 ```{r, include=FALSE}
 

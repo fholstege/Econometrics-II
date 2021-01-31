@@ -56,7 +56,7 @@ dfFlu <- read.dta13("Data/FluData.dta")
 dfFlu_treatment <- dfFlu[dfFlu$TreatGroup == 1,]
 dfFlu_control <- dfFlu[dfFlu$TreatGroup == 0,]
 
-
+p_flu
 sigma2_flu_control <- p_flu*(1-p_flu)
 
 
