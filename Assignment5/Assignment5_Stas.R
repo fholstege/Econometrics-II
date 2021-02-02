@@ -1,11 +1,12 @@
 library(rio)
 library(stargazer)
 library(tidyverse)
+library(AER)
+library(plm)
 
 # Problem 1: it's not consistent
 
 # Problem 2
-setwd("~/Documents/Econometrics-II")
 dfM <- import("Data/marriagemarket.dta")
 
 # Drop NA's
@@ -14,7 +15,22 @@ dfM <- drop_na(dfM, "mortality")
 # I) Regress births on pre-war sex ratio
 lm_pre <- lm(illeg ~ sr, dfM[dfM$post == 0,])
 
-stargazer(lm_pre, type = "text", 
+
+# function: calcs robust se for lm() object
+calc_robust_se <- function(model){
+  
+  cov_model <- vcovHC(model, type = "HC1")
+  robust_se <- sqrt(diag(cov_model))
+  return(robust_se)
+}
+
+# calc robust se for first regression
+robust_se_lm_pre <- calc_robust_se(lm_pre)
+
+# create output table
+stargazer(lm_pre, 
+          #type = "text", 
+          se = list(robust_se_lm_pre),
           keep.stat=c("n","adj.rsq"))
 
 # II) Generate a dummy for whether the military mortality in a region is above thee median
@@ -28,7 +44,6 @@ dfM %>%
   summarise(Births = mean(illeg))
 
 DID <- mean(dfM[dfM$groups == "Post_above",]$illeg) - mean(dfM[dfM$groups == "Pre_above",]$illeg) - (mean(dfM[dfM$groups == "Post_below",]$illeg) - mean(dfM[dfM$groups == "Pre_below",]$illeg))
-DID
 
 # III) Estimate DID regression
 # Create a dummy for post*mortality
@@ -40,7 +55,6 @@ stargazer(lm_DID, lm_DID_depc, type = "text",
           keep.stat=c("n","adj.rsq"))
 
 # IV) Key assumption? Paralell trends. We can't estimate as we have only 2 periods
-
 
 
 
