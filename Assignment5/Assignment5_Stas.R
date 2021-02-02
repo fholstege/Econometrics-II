@@ -25,7 +25,7 @@ dfM$groups <- ifelse(dfM$post == 1 & dfM$mortality_above == 1, "Post_above", ife
 
 dfM %>%
   group_by(groups) %>%
-  summarise(Mortality = mean(mortality))
+  summarise(Births = mean(illeg))
 
 DID <- mean(dfM[dfM$groups == "Post_above",]$illeg) - mean(dfM[dfM$groups == "Pre_above",]$illeg) - (mean(dfM[dfM$groups == "Post_below",]$illeg) - mean(dfM[dfM$groups == "Pre_below",]$illeg))
 DID
