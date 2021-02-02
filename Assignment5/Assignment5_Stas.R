@@ -49,13 +49,21 @@ DID <- mean(dfM[dfM$groups == "Post_above",]$illeg) - mean(dfM[dfM$groups == "Pr
 # Create a dummy for post*mortality
 dfM$post_mortality <- dfM$post * dfM$mortality
 
+# interaction effect - no dummies 
 lm_DID <- lm(illeg ~ post_mortality + post, dfM)
+
 lm_DID_depc <- lm(illeg ~ post_mortality + post + as.factor(depc), dfM)
-stargazer(lm_DID, lm_DID_depc, type = "text", 
+
+robust_se_lm_DID <- calc_robust_se(lm_DID)
+robust_se_lm_DID_depc <-  calc_robust_se(lm_DID_depc)
+
+stargazer(lm_DID, lm_DID_depc,
+          se = list(robust_se_lm_DID, robust_se_lm_DID_depc),
+          type = 'text',
+          omit="depc",
           keep.stat=c("n","adj.rsq"))
 
 # IV) Key assumption? Paralell trends. We can't estimate as we have only 2 periods
-
 
 
 

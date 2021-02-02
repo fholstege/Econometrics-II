@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.1.16)  2 FEB 2021 18:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.2.2)  2 FEB 2021 21:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -522,20 +522,40 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 x.map}]
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 149.
+               Default added (so using `tbp') on input line 152.
 
-! Extra alignment tab has been changed to \cr.
-<recently read> \endtemplate 
-                             
-l.152  Above the median&
-                          5.09 & 6.15 & 1.06    \\ 
+[2] (./Assignment5_Doc.aux)
+Package rerunfilecheck Info: File `Assignment5_Doc.out' has not changed.
+(rerunfilecheck)             Checksum: 968CE5C749B4AB587A25248EE9E8913D;314.
+ ) 
 Here is how much of TeX's memory you used:
- 10405 strings out of 481252
- 150287 string characters out of 5914123
- 442543 words of memory out of 5000000
- 27174 multiletter control sequences out of 15000+600000
- 443986 words of font info for 63 fonts, out of 8000000 for 9000
+ 10422 strings out of 481252
+ 150440 string characters out of 5914124
+ 442616 words of memory out of 5000000
+ 27181 multiletter control sequences out of 15000+600000
+ 446981 words of font info for 64 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 71i,10n,74p,249b,324s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 71i,10n,74p,249b,329s stack positions out of 5000i,500n,10000p,200000b,80000s
+{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-math
+sy.enc}{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm
+-ec.enc}{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/l
+m-rm.enc}{c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/
+lm-mathit.enc}<c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/pu
+blic/lm/lmbx10.pfb><c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/fonts/typ
+e1/public/lm/lmbx12.pfb><c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist/font
+s/type1/public/lm/lmmi10.pfb><c:/Users/flori/AppData/Roaming/TinyTeX/texmf-dist
+/fonts/type1/public/lm/lmmi7.pfb><c:/Users/flori/AppData/Roaming/TinyTeX/texmf-
+dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/flori/AppData/Roaming/TinyTeX/te
+xmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/flori/AppData/Roaming/TinyTe
+X/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/Users/flori/AppData/Roaming/Ti
+nyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/flori/AppData/Roaming
+/TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/Users/flori/AppData/Ro
+aming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/flori/AppDa
+ta/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
+Output written on Assignment5_Doc.pdf (2 pages, 161369 bytes).
+PDF statistics:
+ 97 PDF objects out of 1000 (max. 8388607)
+ 81 compressed objects within 1 object stream
+ 14 named destinations out of 1000 (max. 500000)
+ 41 words of extra memory for PDF output out of 10000 (max. 10000000)
 
-!  ==> Fatal error occurred, no output PDF file produced!
