@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-## 1
+## Problem 1
 
 This approach is a difference-in-difference approach, which can be written in OLS form as: 
 
@@ -18,16 +18,16 @@ This approach is a difference-in-difference approach, which can be written in OL
   &= B_0 + \delta D_g + U_g
 \end{align*}
 
-Where $y_{g1}, y_{g0}$ is the dependent variable (grade point average) at after the first year ($t = 0$), and after the second year ($t = 1$). $B_0$ is the trend and $\delta$ is the effect of treatment $D_g$, in this case providing housing if one has a GPA higher than 8. $U_g$ are the errrors of this model. 
+Where $y_{g1}, y_{g0}$ are the dependent variables (grade point average) at the first year ($t = 0$), and after the second year ($t = 1$). $B_0$ is the time trend and $\delta$ is the effect of treatment $D_g$, in this case providing housing if one has a GPA higher than 8. $U_g$ are the errrors of this model. 
 
-We know that OLS is consistent as long as $D_g$ and $U_g$ are uncorrelated. In order for this to hold, the treatment needs to be independent of the outcome variable. That is not the case here, as the outcome variable consists partially of first year grades ($y_{g0}$), which also determine whether or not someone receives the treatment. Hence, we would not expect this approach to give a consistent estimator. 
+We know that OLS is consistent as long as $D_g$ and $U_g$ are uncorrelated. For further discussion we shall assume that students were aware of this housing program prior to their studies, i.e. they could anticipate that their GPA would influence whether they would receive the housing in the second year or not. In order for the strict exogeneity assumption to hold, the treatment needs to be independent of the outcome variable. That is not the case here, as the treatment $D_g$ is correlated with an error term $U_{g0}$. We expect to observe an Ashenfelter-dip so students expected their GPA would influence their housing oppotrunties in the second year, which affected the distribution of treatment itself. Hence, we would not expect this approach to give a consistent estimator. 
 
 
-## 2 
+## Problem 2 
 
 ### I) 
 
-A bivariate model of sex ratio and \% out-of-wedlock births, using only observations from the year before the war, finds no statistically significant effect from sex ratio on \% out-of-wedlock births (robust standard errors), suggesting that position of men in the marriage market does not improve with a reduction in de sex ratio. 
+A bivariate model of sex ratio and \% out-of-wedlock births, using only observations from the year before the war, finds no statistically significant effect from sex ratio on \% out-of-wedlock births (robust standard errors), suggesting that position of men in the marriage market does not improve with a reduction in the sex ratio. 
 
 
 \begin{table}[!htbp] \centering 
@@ -42,10 +42,8 @@ A bivariate model of sex ratio and \% out-of-wedlock births, using only observat
 \hline \\[-1.8ex] 
  Sex Ratio & $-$0.089 \\ 
   & (5.050) \\ 
-  & \\ 
  Constant & 6.772 \\ 
   & (5.786) \\ 
-  & \\ 
 \hline \\[-1.8ex] 
 Observations & 87 \\ 
 Adjusted R$^{2}$ & $-$0.012 \\ 
@@ -55,7 +53,7 @@ Adjusted R$^{2}$ & $-$0.012 \\
 \end{tabular} 
 \end{table} 
 
-However, there are some obvious problems with this approach. The problem with this approach is that there might be department-specific attributes that could mean the the \% of births out of wedlock are structually higher or lower. Using OLS, while ignoring these department-specific effects results in biased estimations. 
+However, there are some obvious problems with this approach. The problem with this approach is that there might be department-specific attributes that could mean the the \% of births out of wedlock are structually higher or lower, i.e. departments located in more religious regions would have lower rate of  out-of-wedlock births. Using OLS, while ignoring these department-specific effects results in an omitted-variable problem. 
 
 We can improve upon this approach by using a difference-in-difference approach, with the military mortality rate as a treatment. In the French army, the vast majority of armed forces were men. A high military mortality rate should thus decrease the ratio of men to women, increasing the position of men in the wedding market after the war, subsequently leading (if you believe the argument made in the exercise) to more out-of-wedlock births. 
 
@@ -63,18 +61,23 @@ If we use difference-in-difference, we avoid the previously mentioned problem, i
 
 ### II) 
 
+The results of the difference-in-difference estimator using a table are presented below: 
 
-\begin{table}[]
-\begin{tabular}{r|r|r|r}
-                  & Before the war & After the war & Difference \\
-                  \hline
- Above the median&  5.09 & 6.15 & 1.06    \\
- \hline
- Below the median&  7.96 & 8.45 & 0.49   \\
- \hline 
- Difference-in-Difference & & & 0.57 \\
-\end{tabular}
-\end{table}
+\begin{table}[!htbp] \centering 
+  \caption{Difference-in-difference estimator} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+\\[-1.8ex] & Before the war & After the war & Difference \\ 
+\hline \\[-1.8ex] 
+ Above the median & 5.09 & 6.15 & 1.06 \\ 
+ Below the median & 7.96 & 8.45 & 0.49 \\ 
+  Difference-in-Difference & -2.87 & -2.3 & 0.57 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table} 
 
 
 ### III)
@@ -83,19 +86,17 @@ If we use difference-in-difference, we avoid the previously mentioned problem, i
 We run the following model
 
 \begin{align*}
-  \% of out-of-wedlock births = \beta_0 + \beta_1 (Post \cdot \text{Military mortality}) + \beta_2 Post + U
+  \% \text{of out-of-wedlock births} = \beta_0 + \beta_1 (\text{Post} \cdot \text{Military mortality}) + \beta_2 Post + U
 \end{align*}
 
 In which the dependent variable is the \% of out-of-wedlock births, "Post" is a dummy variable, with value 1 if this dependent variable was measured after the war, and 0 if before. 
 
 Before we make any conclusions, how should we interpret the coefficients $\beta_1, \beta_2$?. For $\beta_1$, the interaction term is simply the effect of military mortality on  \% of out-of-wedlock births, if  this \% was measured after the war. This is appropriate, because if the \% was measured before the war, we would not yet know the potential effect of the military mortality rate. For $\beta_2$, this simply measures the (average) difference between \% of out-of-wedlock births before and after the war. This is important, because it ensures that any effect attributed to the 'Military mortality' variable is not due to a general increase in out-of-wedlock births after the war. 
 
-Table \ref{fig:mortality_results} shows the results for the abovementioned model, with robust standard erros, and with and without department dummies. 
-When we do not apply department dummies, the model shows that the 'post' variable is statistically significant, indicating that in general the \% of out-of-wedlock births increased by 9.4\% after the war. But the interaction variable between 'post' and military mortality is also statistically significant, indicating that one \% increase in the mortality rate on average led to an 0.5\% decrease in the out-of-wedlock births, suggesting that the position of males in the wedding market only worsened as the sex ratio decreased. 
-
+Table \ref{fig:mortality_results} shows the results for the abovementioned model, with robust standard erros, and with and without department dummies. When we use model without department dummies, we cluster standard errors at the level of department. When we do not apply department dummies, the model shows that the 'post' variable indicates an increase in the \% of out-of-wedlock birthsby 9.4\% after the war which is statistically significant at the 1 \% level. The interaction variable between 'post' and military mortality is also statistically significant, indicating that one \% increase in the mortality rate on average led to an 0.5\% decrease in the out-of-wedlock births, suggesting that the position of males in the wedding market only worsened as the sex ratio decreased. 
 
 \begin{table}[!htbp] \centering 
-  \caption{} 
+  \caption{The results of the DID model without and with department dummies} 
   \label{fig:mortality_results} 
 \begin{tabular}{@{\extracolsep{5pt}}lcc} 
 \\[-1.8ex]\hline 
@@ -106,13 +107,13 @@ When we do not apply department dummies, the model shows that the 'post' variabl
 \\[-1.8ex] & (No department dummies) & (With department dummies)\\ 
 \hline \\[-1.8ex] 
  post\_mortality & $-$0.515$^{***}$ & 0.148$^{***}$ \\ 
-  & (0.151) & (0.049) \\ 
+  & (0.131) & (0.040) \\ 
   & & \\ 
  post & 9.376$^{***}$ & $-$1.740$^{**}$ \\ 
-  & (2.689) & (0.872) \\ 
+  & (2.242) & (0.673) \\ 
   & & \\ 
  Constant & 6.672$^{***}$ & 6.360$^{***}$ \\ 
-  & (0.380) & (0.071) \\ 
+  & (0.336) & (0.478) \\ 
   & & \\ 
 \hline \\[-1.8ex] 
 Observations & 174 & 174 \\ 
@@ -125,7 +126,7 @@ Adjusted R$^{2}$ & 0.085 & 0.958 \\
 
 ### IV)
 
-Once we include dummies for each department, the results are reversed: the 'post' variable is still statistically significant, but now indicates that the \% of out-of-wedlock births decreased by 1.7\% after the war, and the interaction variable between 'post' and military mortality indicates that one \% increase in the mortality rate on average led to an 0.15\% increase in the out-of-wedlock birth,  suggesting that the position of males in the wedding market only worsened as the sex ratio increased.
+Once we include dummies for each department, the results are reversed: the 'post' variable is still statistically significant, but now indicates that the \% of out-of-wedlock births decreased by 1.7\% after the war, and the interaction variable between 'post' and military mortality indicates that one \% increase in the mortality rate on average led to an 0.15\% increase in the out-of-wedlock birth, suggesting that fewer men returning after the war led to a higher proportion of illegally born children which is to be expected.
 
 How is this possible? When we use a dummy for each department, we assume that there is a fixed effect (both before and after the war) per department that affects the the \% of out-of-wedlock births. We prefer this specification, because it seems plausible that certain aspects of department, such as socio-economic circumstances and social and cultural norms in particular areas, should affect the rate of out-of-wedlock births. 
 
@@ -134,4 +135,6 @@ How is this possible? When we use a dummy for each department, we assume that th
 
 The key assumption we make is the so-called 'common trend' assumption, which states that the difference between the control and treatment (existent because of the different make-up of the control and treatment group) remains constant over time. In our case, we assume that the trend in the difference in out of wedlock births between departments that ended up having with high and low military mortality rates continued. 
 
-How can we test if this assumption is reasonable? One of the easiest and most intuitive ways is to simply plot the difference in out of wedlock births between departments over time, and see if the difference is constant or rather time-varying. But we cannot use this test in this case, since we only have data for two moments (before and after the war), instead of several years leading up to the war. 
+How can we test if this assumption is reasonable? One of the easiest and most intuitive ways is to simply plot the difference in out of wedlock births between departments over time, and see if the difference is constant or rather time-varying. We can also use placebo to test whether there are statistically significant effect of the treamnet prior to the year treatment has been implemented. But we cannot use this test in this case, since we only have data for two moments (before and after the war), instead of several years leading up to the war. 
+
+
