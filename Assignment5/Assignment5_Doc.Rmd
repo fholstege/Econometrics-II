@@ -53,7 +53,7 @@ Adjusted R$^{2}$ & $-$0.012 \\
 \end{tabular} 
 \end{table} 
 
-However, there are some obvious problems with this approach. The problem with this approach is that there might be department-specific attributes that could mean the the \% of births out of wedlock are structually higher or lower, i.e. departments located in more religious regions would have lower rate of  out-of-wedlock births. Using OLS, while ignoring these department-specific effects results in an omitted-variable problem. 
+However, te problem with this approach is that there might be department-specific attributes that could mean the the \% of births out of wedlock are structually higher or lower, i.e. departments located in more religious regions would have lower rate of  out-of-wedlock births. Using OLS, while ignoring these department-specific effects results in an omitted-variable problem. 
 
 We can improve upon this approach by using a difference-in-difference approach, with the military mortality rate as a treatment. In the French army, the vast majority of armed forces were men. A high military mortality rate should thus decrease the ratio of men to women, increasing the position of men in the wedding market after the war, subsequently leading (if you believe the argument made in the exercise) to more out-of-wedlock births. 
 
@@ -91,7 +91,7 @@ We run the following model
 
 In which the dependent variable is the \% of out-of-wedlock births, "Post" is a dummy variable, with value 1 if this dependent variable was measured after the war, and 0 if before. 
 
-Before we make any conclusions, how should we interpret the coefficients $\beta_1, \beta_2$?. For $\beta_1$, the interaction term is simply the effect of military mortality on  \% of out-of-wedlock births, if  this \% was measured after the war. This is appropriate, because if the \% was measured before the war, we would not yet know the potential effect of the military mortality rate. For $\beta_2$, this simply measures the (average) difference between \% of out-of-wedlock births before and after the war. This is important, because it ensures that any effect attributed to the 'Military mortality' variable is not due to a general increase in out-of-wedlock births after the war. 
+Before we make any conclusions, how should we interpret the coefficients $\beta_1, \beta_2$? For $\beta_1$, the interaction term is simply the effect of military mortality on  \% of out-of-wedlock births, if  this \% was measured after the war. This is appropriate, because if the \% was measured before the war, we would not yet know the potential effect of the military mortality rate. For $\beta_2$, this simply measures the (average) difference between \% of out-of-wedlock births before and after the war. This is important, because it ensures that any effect attributed to the 'Military mortality' variable is not due to a general increase in out-of-wedlock births after the war. 
 
 Table \ref{fig:mortality_results} shows the results for the abovementioned model, with robust standard erros, and with and without department dummies. When we use model without department dummies, we cluster standard errors at the level of department. When we do not apply department dummies, the model shows that the 'post' variable indicates an increase in the \% of out-of-wedlock birthsby 9.4\% after the war which is statistically significant at the 1 \% level. The interaction variable between 'post' and military mortality is also statistically significant, indicating that one \% increase in the mortality rate on average led to an 0.5\% decrease in the out-of-wedlock births, suggesting that the position of males in the wedding market only worsened as the sex ratio decreased. 
 
@@ -128,7 +128,7 @@ Adjusted R$^{2}$ & 0.085 & 0.958 \\
 
 Once we include dummies for each department, the results are reversed: the 'post' variable is still statistically significant, but now indicates that the \% of out-of-wedlock births decreased by 1.7\% after the war, and the interaction variable between 'post' and military mortality indicates that one \% increase in the mortality rate on average led to an 0.15\% increase in the out-of-wedlock birth, suggesting that fewer men returning after the war led to a higher proportion of illegally born children which is to be expected.
 
-How is this possible? When we use a dummy for each department, we assume that there is a fixed effect (both before and after the war) per department that affects the the \% of out-of-wedlock births. We prefer this specification, because it seems plausible that certain aspects of department, such as socio-economic circumstances and social and cultural norms in particular areas, should affect the rate of out-of-wedlock births. 
+How is this possible? When we use a dummy for each department, we assume that there is a fixed effect (both before and after the war) per department that affects the the \% of out-of-wedlock births. We prefer this specification, because it seems plausible that certain aspects of department, such as socio-economic circumstances and social and cultural norms (the main example being the degree of religiosity) in particular areas, should affect the rate of out-of-wedlock births. 
 
 
 ### V) 
